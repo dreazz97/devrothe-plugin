@@ -249,8 +249,8 @@ test flow). Understands first, plans, discloses impact, then builds with real te
    small slices; presented for approval.
 4. **Impact** — after approval and before coding, states the blast radius: whether it can break the
    app, which existing features it touches, or that it is isolated.
-5. **Implement** — slice by slice, following the project's stack/structure/conventions, with a safety
-   net for changes to existing code.
+5. **Implement** — slice by slice, following the project's stack/structure/conventions (professional
+   UI/UX, no AI-slop tells), with a safety net for changes to existing code.
 6. **Tests & validate** — real tests for the feature, green suite + lint/build/startup, and the
    manual-testing disclaimer (browser UI/UX).
 

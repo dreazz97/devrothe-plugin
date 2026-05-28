@@ -25,6 +25,13 @@ safety net. Why: the user wants an addition, not regressions elsewhere.
 still recommended to do manually — especially UI/UX in a real browser. Why: a green suite confirms
 logic, not look and feel.
 
+**Rule: professional UI/UX, not the generic AI look.** If the feature has any UI, follow
+`../create-application/references/design.md` — professional UI/UX fundamentals (hierarchy, spacing,
+type scale, WCAG AA contrast, focus/keyboard states, responsiveness) and none of the AI-slop tells
+(emojis as UI, cliché purple→blue gradients, untouched stock defaults, buzzword filler). Match the
+project's existing design language. Why: a new feature must look as deliberate and consistent as the
+rest of the app, not mass-produced.
+
 ## Workflow
 
 Copy this checklist into the response and tick items off:
@@ -84,8 +91,10 @@ Always state this even when the answer is "no impact". If the risk is non-trivia
 Implement the plan slice by slice, placing code in the project's feature-first structure and following
 its conventions. For changes that touch existing code, work with a **safety net** (a git branch and
 commits per slice, or a backup if the project has no git — see
-`../refactor-application/references/execution.md`). Keep other features' behavior unchanged. Update the
-`README.md` and the tasks (`TaskUpdate`) as the feature lands.
+`../refactor-application/references/execution.md`). Keep other features' behavior unchanged. For any UI,
+follow `../create-application/references/design.md` (professional UI/UX, no AI-slop tells) and match the
+project's existing design language. Update the `README.md` and the tasks (`TaskUpdate`) as the feature
+lands.
 
 ### 5. Tests & validate
 
@@ -110,5 +119,6 @@ features, the test results and the recommended manual checks.
 - **`references/impact-analysis.md`** — how to assess the blast radius and phrase the impact statement.
   Read in step 3.
 - **Target methodology** (reused from other skills): `../create-application/references/web-stack.md`,
-  `app-stack.md`, `modules.md`, `testing.md`; `../test-application/references/detect-and-run.md`;
-  `../refactor-application/references/execution.md` (safety net).
+  `app-stack.md`, `modules.md`, `testing.md`, `design.md` (UI/UX);
+  `../test-application/references/detect-and-run.md`; `../refactor-application/references/execution.md`
+  (safety net).
