@@ -3,8 +3,9 @@
 Plugin of **development-support skills** for [Claude Code](https://code.claude.com).
 Distributed as a marketplace from GitHub (`dreazz97/devrothe-plugin`).
 
-Current state: 3 skills — [`create-application`](#skill-create-application),
-[`test-application`](#skill-test-application) and [`refactor-application`](#skill-refactor-application).
+Current state: 4 skills — [`create-application`](#skill-create-application),
+[`test-application`](#skill-test-application), [`refactor-application`](#skill-refactor-application) and
+[`implement-feature`](#skill-implement-feature).
 
 ---
 
@@ -29,12 +30,17 @@ Devrothe Plugin/
         │       ├── app-analysis.md     # classify the application type
         │       ├── detect-and-run.md   # detect and run tests per ecosystem
         │       └── test-plan.md        # what to test per facet
-        └── refactor-application/
-            ├── SKILL.md                # analyze + restructuring plan + execute + validate
+        ├── refactor-application/
+        │   ├── SKILL.md                # analyze + restructuring plan + execute + validate
+        │   └── references/
+        │       ├── assessment.md       # analysis: app type, deviations and bugs
+        │       ├── restructure-plan.md # phased restructuring plan
+        │       └── execution.md        # safe execution and validation
+        └── implement-feature/
+            ├── SKILL.md                # clarify + plan + impact statement + implement + tests
             └── references/
-                ├── assessment.md       # analysis: app type, deviations and bugs
-                ├── restructure-plan.md # phased restructuring plan
-                └── execution.md        # safe execution and validation
+                ├── analysis-and-plan.md # analyze the codebase and structure the plan
+                └── impact-analysis.md   # blast-radius assessment before coding
 ```
 
 ---
@@ -75,6 +81,7 @@ To iterate on the plugin without going through GitHub, add the marketplace by lo
 | `/create-application` | Interviews, picks the stack, plans, scaffolds and implements the project with real tests. |
 | `/test-application` | Detects and runs the app's tests and reports; if there are none, analyzes the app, creates tests per facet and reports. |
 | `/refactor-application` | Analyzes an existing app, plans the restructuring toward the `create-application` stack/practices, executes (with approval) and validates with tests. |
+| `/implement-feature` | Implements a requested feature in an existing project: clarifies, plans, states the impact, then builds it with real tests following the project's conventions. |
 
 The skills also trigger via natural language (see the triggers below) — using the slash command is not
 mandatory.
@@ -213,6 +220,35 @@ of `test-application`.
 
 > Restructures without changing functionality — the only allowed behavior change is fixing the bugs
 > listed in the plan.
+
+---
+
+## Skill: `implement-feature`
+
+Implements a feature you request into an existing project, respecting its conventions and reusing the
+methodology of the other skills (`create-application` for structure/tests, `test-application` for the
+test flow). Understands first, plans, discloses impact, then builds with real tests.
+
+### How to invoke
+
+- Command: `/implement-feature`
+- Trigger phrases: *"implement a feature"*, *"add a feature"*, *"build this feature"* (plus the
+  Portuguese equivalents).
+
+### Flow
+
+1. **Context** — reads CLAUDE.md, memory, READMEs/docs and the codebase area the feature lives in.
+2. **Clarify** — asks you questions if the request is ambiguous (skipped if already clear).
+3. **Plan** — runs an extensive codebase analysis when the conversation lacks context, then a plan of
+   small slices; presented for approval.
+4. **Impact** — after approval and before coding, states the blast radius: whether it can break the
+   app, which existing features it touches, or that it is isolated.
+5. **Implement** — slice by slice, following the project's stack/structure/conventions, with a safety
+   net for changes to existing code.
+6. **Tests & validate** — real tests for the feature, green suite + lint/build/startup, and the
+   manual-testing disclaimer (browser UI/UX).
+
+> Preserves existing behavior — the feature must not break or change other features.
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "name": "devrothe",
-  "version": "0.4.1",
-  "description": "Development-support skills: create-application (bootstrap, planning and implementation with real tests), test-application (validate/create/run tests) and refactor-application (restructure an existing app to the target stack and practices).",
+  "version": "0.5.0",
+  "description": "Development-support skills: create-application (bootstrap, planning and implementation with real tests), test-application (validate/create/run tests), refactor-application (restructure an existing app to the target stack and practices) and implement-feature (add a feature to an existing project with impact analysis and real tests).",
   "author": {
     "name": "Iuri Peniche",
     "email": "iuri@pgtecmed.com"

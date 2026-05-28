@@ -28,8 +28,9 @@ Follow Anthropic's official Agent Skills best practices, consistent with the exi
   `references/*.md`, kept **one level deep** from SKILL.md.
 - **Imperative voice** in instructions; **explain the why** behind each rule so the model can
   generalize to unanticipated cases.
-- **Naming**: skills use the `verb-application` family (`create-application`, `test-application`,
-  `refactor-application`).
+- **Naming**: skills use a `verb-object` name — `application` for whole-app scope, finer objects for
+  narrower scope (`create-application`, `test-application`, `refactor-application`,
+  `implement-feature`).
 - **Context first**: every skill starts with a step that reads existing project metadata (CLAUDE.md,
   memory, READMEs/docs) before acting.
 - Preserve code blocks, file paths and cross-skill references (`../<skill>/references/...`) when
