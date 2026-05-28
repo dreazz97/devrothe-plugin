@@ -1,177 +1,176 @@
 ---
 name: create-application
-description: Arranca um projeto novo de ponta a ponta — entrevista o utilizador sobre requisitos, escolhe o stack tecnológico adequado, faz o scaffold, planeia as features e implementa o projeto a partir do plano com testes reais. Usar quando o utilizador quer começar um projeto novo, decidir tecnologias/stack, ou inicializar e arrancar uma base de código. Dispara em "create-application", "iniciar desenvolvimento", "novo projeto", "começar um projeto", "arranca um projeto", "que stack uso", "setup inicial", "scaffold". Decide entre stack Next.js (PoC, landing pages, e-commerce, sites institucionais) e stack React+Vite com backend Express/Node ou FastAPI/Python (web applications), com módulos condicionais para autenticação, armazenamento (MinIO), observabilidade (Kubernetes), logging, pagamentos (Stripe) e email (Resend).
+description: Starts a new project end to end — interviews the user about requirements, picks the right tech stack, scaffolds it, plans the features and implements the project from the plan with real tests. Use when the user wants to start a new project, decide technologies/stack, or initialize and bootstrap a codebase. Triggers on "create-application", "start development", "new project", "start a project", "what stack should I use", "scaffold", and in Portuguese "iniciar desenvolvimento", "novo projeto", "começar um projeto", "que stack uso". Chooses between a Next.js stack (PoC, landing pages, e-commerce, marketing sites) and a React+Vite stack with an Express/Node or FastAPI/Python backend (web applications), with optional modules for authentication, storage (MinIO), observability (Kubernetes), logging, payments (Stripe) and email (Resend).
 ---
 
 # create-application
 
-Entrevistar o utilizador, resolver o stack, planear as features e implementar o projeto a partir do
-plano — com testes reais.
+Interview the user, resolve the stack, plan the features and implement the project from the plan —
+with real tests.
 
-A escolha do stack não é livre: existe um stack-padrão por tipo de projeto (definido abaixo) para
-garantir consistência entre projetos e evitar decisões ad-hoc. Propor outra tecnologia apenas se o
-utilizador a pedir explicitamente ou se um requisito a tornar inviável — e nesse caso, explicar porquê.
+The stack is not a free choice: there is a default stack per project type (defined below) to keep
+projects consistent and avoid ad-hoc decisions. Only propose a different technology if the user
+explicitly asks for it or a requirement makes the default unworkable — and in that case, explain why.
 
-**Regra: o `README.md` está sempre atualizado.** O scaffold gera um README e, daí em diante, qualquer
-alteração ao stack, dependências, variáveis de ambiente ou comandos de arranque tem de ser refletida
-no README na mesma tarefa. Porquê: o README é a fonte única de verdade para onboarding e para correr o
-projeto — um README desatualizado é pior do que nenhum.
+**Rule: keep `README.md` up to date.** The scaffold generates a README and, from then on, any change
+to the stack, dependencies, environment variables or run commands must be reflected in the README in
+the same task. Why: the README is the single source of truth for onboarding and for running the
+project — an outdated README is worse than none.
 
-**Regra: estrutura de pastas robusta e feature-first.** Cada solução gerada segue a estrutura definida
-no ficheiro de referência do seu stack — organização por feature/domínio, separação clara de camadas
-(UI, lógica de servidor, acesso a dados), e localizações previsíveis para schemas (Zod/Pydantic),
-tipos, configuração e testes. Porquê: localizações previsíveis e fronteiras explícitas mantêm o
-projeto navegável à medida que cresce, evitam ficheiros gigantes e travam o acoplamento acidental.
-Não usar estruturas ad-hoc nem dispersar lógica de domínio por pastas técnicas genéricas quando existe
-uma feature óbvia. As estruturas dos ficheiros de referência são o mínimo — criar as pastas no
-scaffold mesmo que comecem vazias (com um `.gitkeep`), para fixar a convenção desde o início.
+**Rule: robust, feature-first folder structure.** Every generated solution follows the structure
+defined in its stack reference file — organized by feature/domain, with clear separation of layers
+(UI, server logic, data access) and predictable locations for schemas (Zod/Pydantic), types, config
+and tests. Why: predictable locations and explicit boundaries keep the project navigable as it grows,
+avoid giant files and prevent accidental coupling. Do not use ad-hoc structures nor scatter domain
+logic across generic technical folders when an obvious feature exists. The reference structures are
+the minimum — create the folders during scaffold even if they start empty (with a `.gitkeep`), to
+lock in the convention from the start.
 
-**Regra: testes reais acompanham cada feature.** Cada feature implementada traz testes que exercem o
-seu comportamento (ver `references/testing.md`) — não basta a configuração e as pastas de teste
-criadas no scaffold. Porquê: a camada de testes provisionada no scaffold é só andaime; sem testes que
-afirmem comportamento não há rede de segurança e um gate de testes "verde" mas vazio é teatro. A suíte
-de testes verde é um gate de conclusão (passo 7).
+**Rule: real tests accompany every feature.** Every implemented feature ships with tests that
+exercise its behavior (see `references/testing.md`) — the test config and folders created during
+scaffold are not enough. Why: the test layer provisioned by the scaffold is just scaffolding; without
+tests that assert behavior there is no safety net, and a "green" but empty test gate is theater. A
+green test suite is a completion gate (step 7).
 
 ## Workflow
 
-Copiar este checklist para a resposta e ir marcando:
+Copy this checklist into the response and tick items off:
 
 ```
-- [ ] 0. Contexto — ler CLAUDE.md, memória e READMEs/docs do projeto (se existirem)
-- [ ] 1. Entrevista — requisitos do stack + scope funcional (features, entidades, fluxos)
-- [ ] 2. Resolver o stack a partir das respostas
-- [ ] 3. Plano — desenhar as features/tarefas a construir
-- [ ] 4. Confirmar — stack + plano com o utilizador (nada é escrito/instalado antes do "sim")
-- [ ] 5. Scaffold — estrutura, dependências, configs e README
-- [ ] 6. Implementação — feature a feature, guiada pelo plano, com testes reais
-- [ ] 7. Verificar — lint, build, arranque E suíte de testes verde (gate de conclusão)
+- [ ] 0. Context — read CLAUDE.md, memory and READMEs/docs of the project (if any)
+- [ ] 1. Interview — stack requirements + functional scope (features, entities, flows)
+- [ ] 2. Resolve the stack from the answers
+- [ ] 3. Plan — design the features/tasks to build
+- [ ] 4. Confirm — stack + plan with the user (nothing is written/installed before the "yes")
+- [ ] 5. Scaffold — structure, dependencies, configs and README
+- [ ] 6. Implementation — feature by feature, driven by the plan, with real tests
+- [ ] 7. Verify — lint, build, startup AND a green test suite (completion gate)
 ```
 
-### 0. Contexto do projeto
+### 0. Project context
 
-Antes de avançar, procurar e ler os metadados que ajudem a perceber o contexto e as preferências:
-- `CLAUDE.md` na raiz e em subpastas, e outros ficheiros de instruções de agentes (`AGENTS.md`,
+Before moving on, look for and read metadata that helps understand the context and preferences:
+- `CLAUDE.md` at the root and in subfolders, and other agent instruction files (`AGENTS.md`,
   `.cursor/rules/`, `.github/copilot-instructions.md`).
-- A **memória** do projeto (preferências e decisões já registadas).
-- Ficheiros de texto: `README*`, `docs/`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, ADRs e notas.
+- The project **memory** (preferences and decisions already recorded).
+- Text files: `README*`, `docs/`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, ADRs and notes.
 
-Usar este contexto para informar a entrevista, o plano e a implementação. Porquê: respeitar convenções
-e decisões já documentadas evita contrariar o que o utilizador/equipa já definiu. Numa pasta vazia
-normalmente não há nada a ler — seguir em frente; se já houver um `CLAUDE.md` com preferências,
-respeitá-lo.
+Use this context to inform the interview, the plan and the implementation. Why: respecting conventions
+and decisions already documented avoids contradicting what the user/team has set. In an empty folder
+there is usually nothing to read — move on; if there is already a `CLAUDE.md` with preferences,
+respect it.
 
-### 1. Entrevista
+### 1. Interview
 
-Usar a ferramenta `AskUserQuestion`. Recolher dois blocos:
+Use the `AskUserQuestion` tool. Gather two blocks:
 
-**(a) Scope funcional** — o que a aplicação faz: features principais, entidades/dados centrais,
-fluxos-chave de utilizador e páginas/endpoints obrigatórios. É isto que alimenta o plano (passo 3) e
-a implementação (passo 6); sem scope funcional, a skill só consegue fazer scaffold.
+**(a) Functional scope** — what the application does: main features, core entities/data, key user
+flows and mandatory pages/endpoints. This feeds the plan (step 3) and the implementation (step 6);
+without functional scope, the skill can only scaffold.
 
-**(b) Decisões de stack** — começar pela pergunta de tipo de projeto (decide o stack-base) e depois
-as condicionais. Agrupar perguntas relacionadas no mesmo batch para reduzir idas e voltas.
+**(b) Stack decisions** — start with the project-type question (decides the base stack) and then the
+conditional ones. Group related questions in the same batch to reduce back-and-forth.
 
-**Pergunta-chave (decide o stack-base):**
+**Key question (decides the base stack):**
 
-| Resposta | Stack-base |
-|----------|-----------|
-| PoC, landing page, e-commerce, site institucional/apresentação, blog, site com pouca interatividade no cliente | **Next.js** — ver `references/web-stack.md` |
-| Web application interativa: dashboard, SaaS, app com estado rico no cliente, ferramenta interna | **React + Vite + backend** — ver `references/app-stack.md` |
+| Answer | Base stack |
+|--------|-----------|
+| PoC, landing page, e-commerce, institutional/marketing site, blog, site with little client-side interactivity | **Next.js** — see `references/web-stack.md` |
+| Interactive web application: dashboard, SaaS, app with rich client state, internal tool | **React + Vite + backend** — see `references/app-stack.md` |
 
-Se a fronteira for ambígua (ex.: e-commerce com área de cliente complexa), preferir Next.js — o App
-Router cobre SSR/SEO e interatividade. Reservar React+Vite para casos onde o frontend é claramente
-uma SPA desacoplada de um backend próprio.
+If the boundary is ambiguous (e.g., e-commerce with a complex customer area), prefer Next.js — the App
+Router covers SSR/SEO and interactivity. Reserve React+Vite for cases where the frontend is clearly a
+SPA decoupled from its own backend.
 
-**Perguntas condicionais** (cada "sim" ativa um módulo de `references/modules.md`):
+**Conditional questions** (each "yes" activates a module from `references/modules.md`):
 
-1. Precisa de persistência de dados? → **PostgreSQL** (ativo por defeito; só desativar para sites
-   100% estáticos). ORM: **Prisma** se o backend for Node/Next.js; **SQLAlchemy + Alembic** se for
-   Python/FastAPI.
-2. Vai armazenar imagens ou vídeos? → **MinIO** (módulo `storage`).
-3. Tem autenticação de utilizadores? Se sim, perguntar a abordagem com `AskUserQuestion` (opção única):
-   **Keycloak (OIDC)**, **JWT próprio em cookies httpOnly**, ou **deixar o AI escolher**. Ver o módulo
-   `auth` em `references/modules.md` (inclui o critério de decisão quando é o AI a escolher).
-4. Vai ser deployed em Kubernetes? → **Prometheus + OpenTelemetry** (módulo `observability`).
-5. Quer logging estruturado/sofisticado? → **Pino** (Node) ou **structlog** (Python) (módulo `logging`).
-6. Processa pagamentos? → **Stripe** (módulo `payments`).
-7. Envia email transacional (verificação de conta, recuperação de password, encomendas)? →
-   **Resend** (módulo `email`).
+1. Does it need data persistence? → **PostgreSQL** (on by default; only turn off for 100% static
+   sites). ORM: **Prisma** if the backend is Node/Next.js; **SQLAlchemy + Alembic** if Python/FastAPI.
+2. Will it store images or videos? → **MinIO** (`storage` module).
+3. Does it have user authentication? If so, ask the approach with `AskUserQuestion` (single choice):
+   **Keycloak (OIDC)**, **own JWT in httpOnly cookies**, or **let the AI choose**. See the `auth`
+   module in `references/modules.md` (includes the decision criteria when the AI chooses).
+4. Will it be deployed on Kubernetes? → **Prometheus + OpenTelemetry** (`observability` module).
+5. Want structured/advanced logging? → **Pino** (Node) or **structlog** (Python) (`logging` module).
+6. Does it process payments? → **Stripe** (`payments` module).
+7. Does it send transactional email (account verification, password reset, orders)? → **Resend**
+   (`email` module).
 
-Se o backend for Python/FastAPI, perguntar também se prefere Express/Node — caso contrário, decidir
-em função do projeto (ver `references/app-stack.md` para o critério).
+If the backend is Python/FastAPI, also ask whether Express/Node is preferred — otherwise decide based
+on the project (see `references/app-stack.md` for the criteria).
 
-### 2. Resolver o stack
+### 2. Resolve the stack
 
-Combinar o stack-base com os módulos ativados. Aplicar sempre os defaults transversais abaixo.
+Combine the base stack with the activated modules. Always apply the cross-cutting defaults below.
 
-### 3. Plano
+### 3. Plan
 
-A partir do scope funcional, desenhar um plano de desenvolvimento: dividir em **fatias verticais
-pequenas** e ordená-las por dependência (tipicamente: modelo de dados → autenticação → features de
-domínio → UI/integrações). Para cada fatia, anotar o que entra e que testes a cobrem. Registar o plano
-como tarefas com `TaskCreate` para acompanhar o progresso durante a implementação.
+From the functional scope, design a development plan: split it into **small vertical slices** and
+order them by dependency (typically: data model → authentication → domain features → UI/integrations).
+For each slice, note what goes in and which tests cover it. Record the plan as tasks with `TaskCreate`
+to track progress during implementation.
 
-### 4. Confirmar
+### 4. Confirm
 
-Apresentar ao utilizador o stack resolvido (linguagem, framework, BD/ORM, UI, módulos) **e** o plano
-de features, num resumo curto, e pedir confirmação **antes** de criar ou instalar o que quer que seja.
-O scaffold e a implementação escrevem ficheiros e instalam dependências — não avançar sem o "sim".
+Present to the user the resolved stack (language, framework, DB/ORM, UI, modules) **and** the feature
+plan, as a short summary, and ask for confirmation **before** creating or installing anything. The
+scaffold and the implementation write files and install dependencies — do not proceed without the
+"yes".
 
 ### 5. Scaffold
 
-Seguir o ficheiro de referência do stack-base (`web-stack.md` ou `app-stack.md`) e, para cada módulo
-ativado, a secção correspondente de `modules.md`. Executar os comandos de inicialização, instalar as
-dependências (incluindo as de teste), gerar as configs base e criar a estrutura de pastas robusta.
+Follow the base-stack reference file (`web-stack.md` or `app-stack.md`) and, for each activated module,
+the matching section of `modules.md`. Run the init commands, install the dependencies (including the
+test ones), generate the base configs and create the robust folder structure.
 
-Gerar um `README.md` na raiz do projeto com, no mínimo: descrição curta, stack escolhido,
-pré-requisitos, variáveis de ambiente (`.env`), como subir os serviços de dev (Docker Compose), como
-instalar e arrancar, e como correr testes e lint. Manter sincronizado em qualquer alteração futura
-(ver regra acima).
+Generate a `README.md` at the project root with, at minimum: a short description, the chosen stack,
+prerequisites, environment variables (`.env`), how to bring up the dev services (Docker Compose), how
+to install and run, and how to run tests and lint. Keep it in sync on any future change (see rule
+above).
 
-### 6. Implementação
+### 6. Implementation
 
-Implementar o projeto a partir do plano (passo 3), fatia a fatia, seguindo a estrutura de pastas do
-stack. Para cada fatia:
+Implement the project from the plan (step 3), slice by slice, following the stack's folder structure.
+For each slice:
 
-1. Implementar o código da feature nas pastas certas, respeitando as camadas e fronteiras.
-2. Escrever **testes reais** ao nível adequado (ver `references/testing.md`): unitários para
-   lógica/serviços, integração para endpoints, componente para UI com lógica, e2e para fluxos
-   críticos.
-3. Correr os testes da fatia e iterar (escrever → correr → corrigir) até passarem.
-4. Atualizar as tarefas (`TaskUpdate`) e o README conforme necessário antes de passar à fatia seguinte.
+1. Implement the feature's code in the right folders, respecting layers and boundaries.
+2. Write **real tests** at the appropriate level (see `references/testing.md`): unit for
+   logic/services, integration for endpoints, component for UI with logic, e2e for critical flows.
+3. Run the slice's tests and iterate (write → run → fix) until they pass.
+4. Update the tasks (`TaskUpdate`) and the README as needed before moving to the next slice.
 
-Não marcar uma fatia como concluída com os seus testes a falhar. Cobrir o caminho feliz e os
-erros/edge cases relevantes de cada feature — não deixar features a meio.
+Do not mark a slice as done with its tests failing. Cover the happy path and the relevant
+errors/edge cases of each feature — do not leave features half-done.
 
-### 7. Verificar
+### 7. Verify
 
-A tarefa só está concluída quando, no projeto gerado: a instalação de dependências passa, o lint
-passa, o build passa, a app arranca, **e a suíte de testes completa está verde**. Correr os testes
-como gate final; se algum falhar (ou estiver indevidamente em skip/xfail), corrigir antes de dar por
-concluído. Confirmar também que o README reflete o estado real.
+The task is only done when, in the generated project: dependency install passes, lint passes, build
+passes, the app starts, **and the full test suite is green**. Run the tests as the final gate; if any
+fails (or is improperly skipped/xfail), fix it before calling it done. Also confirm the README
+reflects the real state.
 
-## Defaults transversais (sempre, sem perguntar)
+## Cross-cutting defaults (always, without asking)
 
-- **TypeScript** em todo o código JS.
-- **pnpm** como package manager.
-- **ESLint + Prettier** (com `prettier-plugin-tailwindcss`) para lint e formatação.
-- **Tailwind CSS + shadcn/ui + lucide-react** para UI; **framer-motion** (animações), **next-themes**
-  (tema claro/escuro) e **sonner** (toasts).
-- **Zod + React Hook Form** (`@hookform/resolvers`) para validação de schemas e formulários.
-- **TanStack Query** para server-state no cliente.
-- **Docker Compose** para os serviços de dev (PostgreSQL e, se aplicável, MinIO).
-- **Testes**: Vitest + @testing-library/react + Playwright (Node/JS) e pytest + httpx (Python). A
-  camada é instalada e configurada no scaffold e **preenchida com testes reais** na implementação —
-  ver `references/testing.md`.
+- **TypeScript** in all JS code.
+- **pnpm** as the package manager.
+- **ESLint + Prettier** (with `prettier-plugin-tailwindcss`) for lint and formatting.
+- **Tailwind CSS + shadcn/ui + lucide-react** for UI; **framer-motion** (animations), **next-themes**
+  (light/dark theme) and **sonner** (toasts).
+- **Zod + React Hook Form** (`@hookform/resolvers`) for schema and form validation.
+- **TanStack Query** for client-side server-state.
+- **Docker Compose** for the dev services (PostgreSQL and, if applicable, MinIO).
+- **Tests**: Vitest + @testing-library/react + Playwright (Node/JS) and pytest + httpx (Python). The
+  layer is installed and configured during scaffold and **filled with real tests** during
+  implementation — see `references/testing.md`.
 
-## Referências
+## References
 
-- **`references/web-stack.md`** — scaffold completo do stack Next.js (PoC, landing pages, e-commerce,
-  sites institucionais).
-- **`references/app-stack.md`** — scaffold do stack React + Vite com backend Express/Node ou
-  FastAPI/Python, e o critério para escolher o backend.
-- **`references/testing.md`** — estratégia de testes: o que testar por camada, convenções de
-  localização, ferramentas por stack e o gate de testes verde. Ler na implementação (passo 6).
-- **`references/modules.md`** — módulos condicionais: `auth`, `storage` (MinIO), `observability`
-  (Kubernetes), `logging`, `payments` (Stripe), `email` (Resend). Ler apenas as secções dos módulos
-  ativados na entrevista.
+- **`references/web-stack.md`** — full scaffold of the Next.js stack (PoC, landing pages, e-commerce,
+  marketing sites).
+- **`references/app-stack.md`** — scaffold of the React + Vite stack with an Express/Node or
+  FastAPI/Python backend, and the criteria for choosing the backend.
+- **`references/testing.md`** — testing strategy: what to test per layer, location conventions, tools
+  per stack and the green test gate. Read during implementation (step 6).
+- **`references/modules.md`** — conditional modules: `auth`, `storage` (MinIO), `observability`
+  (Kubernetes), `logging`, `payments` (Stripe), `email` (Resend). Read only the sections of the
+  modules activated in the interview.

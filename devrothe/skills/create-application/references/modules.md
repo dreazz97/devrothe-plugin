@@ -1,126 +1,127 @@
-# Módulos condicionais
+# Conditional modules
 
-Ler apenas as secções dos módulos ativados na entrevista. Cada módulo aplica-se ao stack-base já
-escolhido (Next.js ou React+Vite+backend).
+Read only the sections of the modules activated in the interview. Each module applies to the base
+stack already chosen (Next.js or React+Vite+backend).
 
 ## Contents
-- auth — Autenticação (Keycloak ou JWT próprio em cookies httpOnly)
-- storage — Armazenamento de ficheiros (MinIO / S3)
-- observability — Observabilidade em Kubernetes (Prometheus + OpenTelemetry)
-- logging — Logging estruturado (Pino / structlog)
-- payments — Pagamentos (Stripe)
-- email — Email transacional (Resend)
-- compose — Serviços de dev (Docker Compose)
+- auth — Authentication (Keycloak or own JWT in httpOnly cookies)
+- storage — File storage (MinIO / S3)
+- observability — Observability on Kubernetes (Prometheus + OpenTelemetry)
+- logging — Structured logging (Pino / structlog)
+- payments — Payments (Stripe)
+- email — Transactional email (Resend)
+- compose — Dev services (Docker Compose)
 
-## auth — Autenticação (Keycloak ou JWT próprio em cookies httpOnly)
+## auth — Authentication (Keycloak or own JWT in httpOnly cookies)
 
-O utilizador escolhe a abordagem na entrevista: **Keycloak (OIDC)**, **JWT próprio (cookies httpOnly)**
-ou **deixar o AI decidir**. Em qualquer das opções, os tokens/sessão vivem em cookies `httpOnly`,
-`Secure`, `SameSite=Lax` (padrão BFF) — Keycloak não dispensa boas práticas de cookies. Porquê: um
-cookie httpOnly não é acessível por JavaScript, o que mitiga roubo de token por XSS, ao contrário de
-guardar tokens no `localStorage`. Com `SameSite` mitiga-se CSRF; para fluxos cross-site, juntar um token
-anti-CSRF.
+The user chooses the approach in the interview: **Keycloak (OIDC)**, **own JWT (httpOnly cookies)** or
+**let the AI decide**. In any option, the tokens/session live in `httpOnly`, `Secure`, `SameSite=Lax`
+cookies (BFF pattern) — Keycloak does not waive good cookie practices. Why: an httpOnly cookie is not
+accessible from JavaScript, which mitigates token theft via XSS, unlike storing tokens in
+`localStorage`. `SameSite` mitigates CSRF; for cross-site flows, add an anti-CSRF token.
 
-### Quando é o AI a decidir
+### When the AI decides
 
-- **Keycloak** quando: é preciso SSO / identidade centralizada, vários apps/serviços partilham login,
-  login social ou federação (OIDC/SAML), gestão de utilizadores e roles fora da app (admin UI),
-  requisitos enterprise/compliance, ou a organização já usa Keycloak.
-- **JWT próprio** quando: app única e mais simples, sem IdP externo, infraestrutura mínima e controlo
-  total do fluxo, sem necessidade de SSO/federação.
+- **Keycloak** when: SSO / centralized identity is needed, several apps/services share login, social
+  login or federation (OIDC/SAML), user and role management outside the app (admin UI),
+  enterprise/compliance requirements, or the organization already uses Keycloak.
+- **Own JWT** when: a single, simpler app, no external IdP, minimal infrastructure and full control of
+  the flow, with no need for SSO/federation.
 
-### Opção A — JWT próprio (cookies httpOnly)
+### Option A — Own JWT (httpOnly cookies)
 
-- **Node/Next.js**: `pnpm add jose bcrypt` (`jose` para assinar/verificar JWT; `bcrypt` ou `argon2`
-  para hash de passwords). Em Next.js, definir o cookie via `cookies()` nas Server Actions / Route
-  Handlers. Nunca devolver o token no corpo da resposta.
-- **Express**: `pnpm add jsonwebtoken cookie-parser bcrypt`. Definir o cookie com
+- **Node/Next.js**: `pnpm add jose bcrypt` (`jose` to sign/verify JWT; `bcrypt` or `argon2` to hash
+  passwords). In Next.js, set the cookie via `cookies()` in Server Actions / Route Handlers. Never
+  return the token in the response body.
+- **Express**: `pnpm add jsonwebtoken cookie-parser bcrypt`. Set the cookie with
   `res.cookie(name, token, { httpOnly: true, secure: true, sameSite: "lax" })`.
-- **FastAPI**: `pip install pyjwt "passlib[bcrypt]"`. Definir o cookie com
+- **FastAPI**: `pip install pyjwt "passlib[bcrypt]"`. Set the cookie with
   `response.set_cookie(..., httponly=True, secure=True, samesite="lax")`.
 
-Guardar o segredo de assinatura em variável de ambiente. Definir expiração curta no access token e,
-se necessário, um refresh token rotativo.
+Keep the signing secret in an environment variable. Set a short expiry on the access token and, if
+needed, a rotating refresh token.
 
-### Opção B — Keycloak (OIDC)
+### Option B — Keycloak (OIDC)
 
-Keycloak é um Identity Provider open-source (OIDC/OAuth2/SAML). Corre como serviço próprio (adicionar
-ao Docker Compose em dev — ver secção `compose`) com Postgres como BD. Criar um *realm* e um *client*;
-usar o fluxo **Authorization Code + PKCE**. Validar sempre os tokens contra o JWKS do Keycloak
-(`/realms/<realm>/protocol/openid-connect/certs`) — nunca confiar no token sem verificar a assinatura.
+Keycloak is an open-source Identity Provider (OIDC/OAuth2/SAML). It runs as its own service (add it to
+Docker Compose in dev — see the `compose` section) with Postgres as its DB. Create a *realm* and a
+*client*; use the **Authorization Code + PKCE** flow. Always validate tokens against Keycloak's JWKS
+(`/realms/<realm>/protocol/openid-connect/certs`) — never trust a token without verifying the
+signature.
 
-- **Next.js**: usar Auth.js (`pnpm add next-auth`) com o provider Keycloak; a sessão fica em cookie
-  httpOnly. Alternativa de baixo nível: `openid-client`.
-- **React + Vite (SPA)**: `pnpm add oidc-client-ts` (ou `keycloak-js`) com Authorization Code + PKCE.
-  Preferir o padrão BFF (o backend guarda os tokens em cookie httpOnly) a guardar tokens no browser.
-- **Express**: validar o access token contra o JWKS com `jose` (`createRemoteJWKSet`); autorizar por
-  role/scope do token.
-- **FastAPI**: validar o JWT contra o JWKS com `authlib` (ou `python-jose` + `httpx` para obter as
-  chaves); ler roles/claims para autorização.
+- **Next.js**: use Auth.js (`pnpm add next-auth`) with the Keycloak provider; the session lives in an
+  httpOnly cookie. Low-level alternative: `openid-client`.
+- **React + Vite (SPA)**: `pnpm add oidc-client-ts` (or `keycloak-js`) with Authorization Code + PKCE.
+  Prefer the BFF pattern (the backend stores the tokens in an httpOnly cookie) over storing tokens in
+  the browser.
+- **Express**: validate the access token against the JWKS with `jose` (`createRemoteJWKSet`);
+  authorize by the token's role/scope.
+- **FastAPI**: validate the JWT against the JWKS with `authlib` (or `python-jose` + `httpx` to fetch
+  the keys); read roles/claims for authorization.
 
-Configurar por env: `KEYCLOAK_ISSUER` (URL do realm), `KEYCLOAK_CLIENT_ID` e, em clients confidential,
-`KEYCLOAK_CLIENT_SECRET`. Não usar as credenciais de admin por defeito do Keycloak em produção.
+Configure via env: `KEYCLOAK_ISSUER` (realm URL), `KEYCLOAK_CLIENT_ID` and, for confidential clients,
+`KEYCLOAK_CLIENT_SECRET`. Do not use Keycloak's default admin credentials in production.
 
-## storage — Armazenamento de ficheiros (MinIO / S3)
+## storage — File storage (MinIO / S3)
 
-MinIO é open-source e compatível com a API S3, por isso usa-se o SDK da AWS S3 — não há lock-in e em
-produção pode trocar-se por qualquer S3.
+MinIO is open-source and S3-API compatible, so you use the AWS S3 SDK — no lock-in, and in production
+it can be swapped for any S3.
 
-- Adicionar o serviço `minio` ao Docker Compose (ver secção `compose`).
-- **Node**: `pnpm add @aws-sdk/client-s3 @aws-sdk/s3-request-presigner`. Configurar o cliente com
-  `endpoint` a apontar para o MinIO, `forcePathStyle: true` e credenciais por env.
-- **Python**: `pip install boto3`. Cliente `boto3.client("s3", endpoint_url=...)`.
+- Add the `minio` service to Docker Compose (see the `compose` section).
+- **Node**: `pnpm add @aws-sdk/client-s3 @aws-sdk/s3-request-presigner`. Configure the client with
+  `endpoint` pointing at MinIO, `forcePathStyle: true` and credentials via env.
+- **Python**: `pip install boto3`. Client `boto3.client("s3", endpoint_url=...)`.
 
-Preferir **presigned URLs**: o backend gera um URL assinado e o cliente faz upload/download direto ao
-MinIO. Porquê: evita passar ficheiros grandes pelo backend (menos memória/latência) e mantém as
-credenciais no servidor. Validar tipo e tamanho do ficheiro antes de assinar.
+Prefer **presigned URLs**: the backend generates a signed URL and the client uploads/downloads
+directly to MinIO. Why: avoids passing large files through the backend (less memory/latency) and keeps
+the credentials on the server. Validate file type and size before signing.
 
-## observability — Observabilidade em Kubernetes (Prometheus + OpenTelemetry)
+## observability — Observability on Kubernetes (Prometheus + OpenTelemetry)
 
-Ativar quando o deploy é em Kubernetes. OpenTelemetry para traces/métricas/logs; Prometheus faz scrape
-de um endpoint `/metrics`.
+Enable when the deploy is on Kubernetes. OpenTelemetry for traces/metrics/logs; Prometheus scrapes a
+`/metrics` endpoint.
 
 - **Node**: `pnpm add @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node prom-client`.
-  Inicializar o SDK do OTel antes do resto da app; expor `/metrics` com `prom-client`.
+  Initialize the OTel SDK before the rest of the app; expose `/metrics` with `prom-client`.
 - **Python/FastAPI**: `pip install opentelemetry-distro opentelemetry-instrumentation-fastapi
-  prometheus-client` (e `opentelemetry-bootstrap -a install`). Expor `/metrics`.
-- Configurar o exporter OTLP a apontar para o collector via env (`OTEL_EXPORTER_OTLP_ENDPOINT`).
-- Em Kubernetes, criar um `ServiceMonitor` (Prometheus Operator) ou anotações de scrape para o
-  endpoint `/metrics`. Adicionar liveness/readiness probes.
+  prometheus-client` (and `opentelemetry-bootstrap -a install`). Expose `/metrics`.
+- Configure the OTLP exporter to point at the collector via env (`OTEL_EXPORTER_OTLP_ENDPOINT`).
+- On Kubernetes, create a `ServiceMonitor` (Prometheus Operator) or scrape annotations for the
+  `/metrics` endpoint. Add liveness/readiness probes.
 
-## logging — Logging estruturado (Pino / structlog)
+## logging — Structured logging (Pino / structlog)
 
-Logs estruturados (JSON) são pesquisáveis e correlacionáveis com traces; preferir a `console.log`.
+Structured logs (JSON) are searchable and correlatable with traces; prefer them over `console.log`.
 
-- **Node**: `pnpm add pino` e `pnpm add -D pino-pretty`. Usar JSON em produção e `pino-pretty` só em
-  dev. Incluir um request-id por pedido e nunca registar segredos/PII.
-- **Python/FastAPI**: `pip install structlog`. Configurar processador JSON em produção.
-- Se o módulo `observability` estiver ativo, propagar o trace/span id nos logs para correlação.
+- **Node**: `pnpm add pino` and `pnpm add -D pino-pretty`. Use JSON in production and `pino-pretty` in
+  dev only. Include a request-id per request and never log secrets/PII.
+- **Python/FastAPI**: `pip install structlog`. Configure a JSON processor in production.
+- If the `observability` module is active, propagate the trace/span id into the logs for correlation.
 
-## payments — Pagamentos (Stripe)
+## payments — Payments (Stripe)
 
-- **Node**: `pnpm add stripe` (e `@stripe/stripe-js` + `@stripe/react-stripe-js` no frontend, se usar
-  Elements). **Python**: `pip install stripe`.
-- Toda a lógica sensível (criar PaymentIntent/Checkout Session) corre no servidor; a chave secreta
-  nunca chega ao cliente.
-- Implementar o **webhook** e **verificar a assinatura** (`stripe.webhooks.constructEvent`). Porquê:
-  sem verificação, qualquer um podia forjar eventos de pagamento. Tratar idempotência (o Stripe pode
-  reenviar eventos).
-- Guardar `STRIPE_SECRET_KEY` e `STRIPE_WEBHOOK_SECRET` em env.
+- **Node**: `pnpm add stripe` (and `@stripe/stripe-js` + `@stripe/react-stripe-js` on the frontend if
+  using Elements). **Python**: `pip install stripe`.
+- All sensitive logic (create PaymentIntent/Checkout Session) runs on the server; the secret key never
+  reaches the client.
+- Implement the **webhook** and **verify the signature** (`stripe.webhooks.constructEvent`). Why:
+  without verification, anyone could forge payment events. Handle idempotency (Stripe may resend
+  events).
+- Keep `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in env.
 
-## email — Email transacional (Resend)
+## email — Transactional email (Resend)
 
-Para verificação de conta, recuperação de password, recibos/encomendas.
+For account verification, password reset, receipts/orders.
 
-- **Node**: `pnpm add resend`. Opcional: `react-email` para compor templates em React.
-- **Python**: chamar a API do Resend via HTTP (`pip install resend`).
-- Guardar `RESEND_API_KEY` em env. Configurar um domínio verificado para o remetente.
+- **Node**: `pnpm add resend`. Optional: `react-email` to compose templates in React.
+- **Python**: call the Resend API over HTTP (`pip install resend`).
+- Keep `RESEND_API_KEY` in env. Configure a verified domain for the sender.
 
-## compose — Serviços de dev (Docker Compose)
+## compose — Dev services (Docker Compose)
 
-Subir as dependências de runtime localmente para um ambiente reproduzível. Incluir apenas os serviços
-necessários (Postgres sempre que houver BD; MinIO se o módulo `storage` estiver ativo; Keycloak se a
-autenticação for por Keycloak).
+Bring up the runtime dependencies locally for a reproducible environment. Include only the services
+needed (Postgres whenever there is a DB; MinIO if the `storage` module is active; Keycloak if
+authentication is via Keycloak).
 
 ```yaml
 services:
@@ -133,7 +134,7 @@ services:
     ports: ["5432:5432"]
     volumes: ["pgdata:/var/lib/postgresql/data"]
 
-  # Só se o módulo storage estiver ativo
+  # Only if the storage module is active
   minio:
     image: minio/minio
     command: server /data --console-address ":9001"
@@ -143,7 +144,7 @@ services:
     ports: ["9000:9000", "9001:9001"]
     volumes: ["miniodata:/data"]
 
-  # Só se a autenticação for por Keycloak
+  # Only if authentication is via Keycloak
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     command: start-dev
@@ -162,5 +163,5 @@ volumes:
   miniodata:
 ```
 
-As credenciais acima são apenas para dev. Em produção, usar segredos geridos e nunca os valores por
-defeito.
+The credentials above are for dev only. In production, use managed secrets and never the default
+values.

@@ -1,47 +1,47 @@
-# Execução segura e validação
+# Safe execution and validation
 
-Como aplicar o plano aprovado (restructure-plan.md) sem perder trabalho nem partir a aplicação.
+How to apply the approved plan (restructure-plan.md) without losing work or breaking the application.
 
 ## Contents
-- Rede de segurança (gate)
-- Executar fase a fase
-- Preservar comportamento
-- Validação final e relatório
+- Safety net (gate)
+- Execute phase by phase
+- Preserve behavior
+- Final validation and report
 
-## Rede de segurança (gate)
+## Safety net (gate)
 
-Antes da primeira edição, garantir um caminho de reversão:
-- **Projeto com git**: confirmar a working tree limpa (ou commitar o estado atual) e criar um branch de
-  trabalho (ex.: `fix/restructure`). Commitar ao fim de cada fase para um histórico revertível.
-- **Projeto sem git**: sugerir `git init` + commit inicial; se o utilizador recusar, fazer uma cópia de
-  segurança da pasta antes de mexer.
+Before the first edit, ensure a reversal path:
+- **Project with git**: confirm a clean working tree (or commit the current state) and create a working
+  branch (e.g., `fix/restructure`). Commit at the end of each phase for a revertible history.
+- **Project without git**: suggest `git init` + an initial commit; if the user refuses, make a backup
+  copy of the folder before touching it.
 
-Não prosseguir para a execução sem um destes em vigor. Porquê: é a única forma de desfazer um refactor
-que corra mal.
+Do not proceed to execution without one of these in place. Why: it is the only way to undo a refactor
+that goes wrong.
 
-## Executar fase a fase
+## Execute phase by phase
 
-- Aplicar uma fase de cada vez, na ordem do plano.
-- No fim de cada fase, **validar**: instalar deps, `lint`, `build`, testes e arranque conforme o stack.
-- Só avançar para a fase seguinte com a atual verde. Commitar a fase (se git).
-- Atualizar as tarefas (`TaskUpdate`) e o `README.md` à medida que o estado muda.
-- Se uma fase introduzir um problema difícil de resolver, **parar e reportar** ao utilizador com o
-  diagnóstico, em vez de forçar ou empilhar workarounds.
+- Apply one phase at a time, in the plan's order.
+- At the end of each phase, **validate**: install deps, `lint`, `build`, tests and startup as the stack
+  requires.
+- Only move to the next phase with the current one green. Commit the phase (if git).
+- Update the tasks (`TaskUpdate`) and the `README.md` as the state changes.
+- If a phase introduces a hard-to-solve problem, **stop and report** to the user with the diagnosis,
+  instead of forcing it or stacking workarounds.
 
-## Preservar comportamento
+## Preserve behavior
 
-- Mover/renomear/reorganizar e trocar tecnologias mantendo o mesmo resultado funcional.
-- A única mudança de comportamento permitida é a correção dos bugs listados no plano — e essa fica
-  registada.
-- Quando existir teste para uma área, usá-lo como rede antes e depois de a refatorar; se não existir e a
-  área for de risco, criar primeiro um teste que fixe o comportamento atual, depois refatorar.
+- Move/rename/reorganize and swap technologies while keeping the same functional result.
+- The only allowed behavior change is fixing the bugs listed in the plan — and that is recorded.
+- When a test exists for an area, use it as a net before and after refactoring it; if none exists and
+  the area is risky, first create a test that pins the current behavior, then refactor.
 
-## Validação final e relatório
+## Final validation and report
 
-Ao terminar as fases:
-- Correr a suíte de testes completa; **criar testes** para as vertentes afetadas que não os tinham
-  (alinhar com `../create-application/references/testing.md`). A suíte tem de ficar **verde**.
-- Confirmar lint, build e arranque sem erros.
-- Apresentar um relatório final: desvios corrigidos (antes → depois), bugs resolvidos, ficheiros
-  reorganizados, e o resultado dos testes (totais, falhas, cobertura se disponível). Indicar o branch
-  usado para o utilizador rever/integrar.
+When the phases are finished:
+- Run the full test suite; **create tests** for the affected facets that did not have them (align with
+  `../create-application/references/testing.md`). The suite must end **green**.
+- Confirm lint, build and startup with no errors.
+- Present a final report: deviations fixed (before → after), bugs resolved, files reorganized, and the
+  test results (totals, failures, coverage if available). State the branch used for the user to
+  review/integrate.

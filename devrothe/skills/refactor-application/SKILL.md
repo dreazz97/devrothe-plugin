@@ -1,102 +1,102 @@
 ---
 name: refactor-application
-description: Analisa uma aplicação existente e reestrutura-a para seguir o stack tecnológico, os fundamentos e a organização da skill create-application. Pensada para projetos feitos por pessoas sem experiência: identifica o tipo de app e as vertentes, mapeia os desvios à metodologia-alvo, deteta bugs/erros e cria um plano de reestruturação faseado (incluindo as correções de bugs). Depois de aprovado pelo utilizador, executa o plano de forma incremental e preservando o comportamento, e no fim valida com testes (corre os existentes e cria os que faltarem) mais lint/build/arranque. Usar quando o utilizador quer alinhar/normalizar um projeto existente com as práticas da create-application, refatorar a organização/stack, ou "arranjar" uma app mal estruturada. Dispara em "refactor-application", "refatora a aplicação", "reestrutura a app", "alinha com a create-application", "normaliza o projeto", "refatora a organização", "arranja esta aplicação".
+description: Analyzes an existing application and restructures it to follow the tech stack, fundamentals and organization of the create-application skill. Designed for projects built by inexperienced people: it identifies the app type and its facets, maps the deviations from the target methodology, detects bugs/errors and creates a phased restructuring plan (including the bug fixes). Once approved by the user, it executes the plan incrementally and behavior-preserving, and at the end validates with tests (runs the existing ones and creates the missing ones) plus lint/build/startup. Use when the user wants to align/normalize an existing project with the create-application practices, refactor the organization/stack, or "fix up" a poorly structured app. Triggers on "refactor-application", "refactor the application", "restructure the app", "align with create-application", "normalize the project", and in Portuguese "refatora a aplicação", "reestrutura a app", "normaliza o projeto", "arranja esta aplicação".
 ---
 
 # refactor-application
 
-Pegar numa aplicação existente — tipicamente feita por alguém sem experiência — e reestruturá-la para
-os fundamentos, o stack e a organização da skill `create-application`, corrigindo pelo caminho os
-bugs/erros que já lá estavam.
+Take an existing application — typically built by someone without experience — and restructure it to
+the fundamentals, stack and organization of the `create-application` skill, fixing along the way the
+bugs/errors that were already there.
 
-**Regra: preservar o comportamento.** A reestruturação não altera funcionalidades — é equivalência
-funcional (mover, renomear, reorganizar, alinhar tecnologias). A única exceção são os bugs/erros, que
-são corrigidos e têm de constar do plano. Porquê: o utilizador confia que a app continua a fazer o
-mesmo; mudar features "à boleia" de um refactor torna impossível saber o que partiu.
+**Rule: preserve behavior.** The restructuring does not change functionality — it is functional
+equivalence (move, rename, reorganize, align technologies). The only exception are the bugs/errors,
+which are fixed and must appear in the plan. Why: the user trusts that the app keeps doing the same;
+changing features "on the side" of a refactor makes it impossible to know what broke.
 
-**Regra: rede de segurança antes de mexer.** Não alterar nada sem um caminho de reversão (ver passo 4).
-Porquê: refactor automatizado em código alheio é arriscado; sem histórico/backup não há como voltar
-atrás.
+**Rule: safety net before touching anything.** Do not change anything without a reversal path (see
+step 4). Why: automated refactoring on someone else's code is risky; without history/backup there is
+no way to roll back.
 
-**Regra: incremental e validado.** Avançar fase a fase e validar (lint/build/testes/arranque) ao fim
-de cada uma; só passar à seguinte com a anterior verde. Porquê: erros apanham-se cedo e ficam isolados
-à fase que os introduziu.
+**Rule: incremental and validated.** Move phase by phase and validate (lint/build/tests/startup) at
+the end of each one; only move to the next with the previous one green. Why: errors are caught early
+and stay isolated to the phase that introduced them.
 
-**Metodologia-alvo.** O destino é definido pela `create-application`. Consultar:
-`../create-application/references/web-stack.md` e `../create-application/references/app-stack.md` (stack e
-estrutura de pastas), `../create-application/references/modules.md` (auth, storage, etc.) e
-`../create-application/references/testing.md` (testes). Para classificar a app e detetar/correr testes,
-usar `../test-application/references/app-analysis.md` e `../test-application/references/detect-and-run.md`.
+**Target methodology.** The destination is defined by `create-application`. Consult:
+`../create-application/references/web-stack.md` and `../create-application/references/app-stack.md`
+(stack and folder structure), `../create-application/references/modules.md` (auth, storage, etc.) and
+`../create-application/references/testing.md` (tests). To classify the app and detect/run tests, use
+`../test-application/references/app-analysis.md` and `../test-application/references/detect-and-run.md`.
 
-## Fluxo
+## Flow
 
-Copiar este checklist para a resposta e ir marcando:
+Copy this checklist into the response and tick items off:
 
 ```
-- [ ] 0. Contexto — ler CLAUDE.md, memória e READMEs/docs do projeto (se existirem)
-- [ ] 1. Análise — stack atual, tipo de app/vertentes, desvios à metodologia-alvo e bugs/erros
-- [ ] 2. Plano de reestruturação faseado, incluindo as correções de bugs detetados
-- [ ] 3. Confirmar o plano com o utilizador (nada é alterado antes do "sim")
-- [ ] 4. Rede de segurança — garantir git/branch ou backup
-- [ ] 5. Executar o plano — fase a fase, preservando comportamento, atualizando o README
-- [ ] 6. Validar — testes verdes (correr existentes; criar onde faltarem) + lint/build/arranque
+- [ ] 0. Context — read CLAUDE.md, memory and READMEs/docs of the project (if any)
+- [ ] 1. Analysis — current stack, app type/facets, deviations from the target methodology and bugs/errors
+- [ ] 2. Phased restructuring plan, including the fixes for detected bugs
+- [ ] 3. Confirm the plan with the user (nothing is changed before the "yes")
+- [ ] 4. Safety net — ensure git/branch or backup
+- [ ] 5. Execute the plan — phase by phase, preserving behavior, updating the README
+- [ ] 6. Validate — green tests (run existing; create missing) + lint/build/startup
 ```
 
-### 0. Contexto do projeto
+### 0. Project context
 
-Antes de analisar, procurar e ler os metadados que ajudem a perceber a aplicação e a intenção original:
-- `CLAUDE.md` na raiz e em subpastas, e outros ficheiros de instruções de agentes (`AGENTS.md`,
+Before analyzing, look for and read metadata that helps understand the application and the original
+intent:
+- `CLAUDE.md` at the root and in subfolders, and other agent instruction files (`AGENTS.md`,
   `.cursor/rules/`, `.github/copilot-instructions.md`).
-- A **memória** do projeto (preferências e decisões já registadas).
-- Ficheiros de texto: `README*`, `docs/`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, ADRs e notas.
+- The project **memory** (preferences and decisions already recorded).
+- Text files: `README*`, `docs/`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, ADRs and notes.
 
-Usar este contexto para informar a análise, o mapa de desvios e o plano de reestruturação. Porquê:
-perceber o que a app pretende fazer (e que convenções já existem) é essencial para reestruturar sem
-mudar comportamento nem contrariar decisões deliberadas.
+Use this context to inform the analysis, the deviation map and the restructuring plan. Why:
+understanding what the app intends to do (and which conventions already exist) is essential to
+restructure without changing behavior nor contradicting deliberate decisions.
 
-### 1. Análise
+### 1. Analysis
 
-Analisar o projeto sem o alterar. Produzir: o **tipo de aplicação** e vertentes, um **mapa de desvios**
-à metodologia-alvo (linguagem, tooling, UI, ORM, estrutura de pastas, testes, módulos) e a **lista de
-bugs/erros** já existentes (build/type/lint partidos, runtime, testes a falhar, anti-padrões, red flags
-de segurança). Ver `references/assessment.md`.
+Analyze the project without changing it. Produce: the **application type** and facets, a **deviation
+map** against the target methodology (language, tooling, UI, ORM, folder structure, tests, modules)
+and the **list of existing bugs/errors** (broken build/type/lint, runtime, failing tests,
+anti-patterns, security red flags). See `references/assessment.md`.
 
-### 2. Plano de reestruturação
+### 2. Restructuring plan
 
-A partir da análise, construir um plano **faseado** (baixo-risco primeiro), preservando comportamento.
-O plano tem de incluir uma secção explícita de **bugs/erros a corrigir**. Registar as fases/tarefas com
-`TaskCreate`. Ver `references/restructure-plan.md`.
+From the analysis, build a **phased** plan (low-risk first), preserving behavior. The plan must include
+an explicit section of **bugs/errors to fix**. Record the phases/tasks with `TaskCreate`. See
+`references/restructure-plan.md`.
 
-### 3. Confirmar
+### 3. Confirm
 
-Apresentar ao utilizador o plano completo: tipo de app, desvios, bugs a corrigir, fases, esforço e
-riscos. Pedir aprovação **antes** de alterar o que quer que seja. Para migrações de elevado esforço
-(ex.: troca de framework), assinalá-las e oferecer aprovação fase a fase. Não avançar sem o "sim".
+Present the full plan to the user: app type, deviations, bugs to fix, phases, effort and risks. Ask for
+approval **before** changing anything. For high-effort migrations (e.g., framework swap), flag them and
+offer phase-by-phase approval. Do not proceed without the "yes".
 
-### 4. Rede de segurança
+### 4. Safety net
 
-Antes de qualquer edição, garantir reversibilidade (gate — ver `references/execution.md`): se o projeto
-usa git, criar um branch e commitar o estado atual; se não usa, sugerir `git init` + commit inicial ou
-uma cópia de segurança. Não prosseguir sem isto.
+Before any edit, ensure reversibility (gate — see `references/execution.md`): if the project uses git,
+create a branch and commit the current state; if not, suggest `git init` + an initial commit or a
+backup copy. Do not proceed without this.
 
-### 5. Executar
+### 5. Execute
 
-Executar o plano fase a fase, seguindo `references/execution.md`. Em cada fase: aplicar as mudanças,
-preservar o comportamento, validar (lint/build/testes/arranque) e atualizar o `README.md` e as tarefas
-(`TaskUpdate`). Se uma fase partir algo difícil de resolver, parar e reportar em vez de forçar.
+Execute the plan phase by phase, following `references/execution.md`. In each phase: apply the changes,
+preserve behavior, validate (lint/build/tests/startup) and update the `README.md` and the tasks
+(`TaskUpdate`). If a phase breaks something hard to fix, stop and report instead of forcing it.
 
-### 6. Validar
+### 6. Validate
 
-Confirmar que tudo funciona: correr os testes existentes e **criar os que faltarem** para as vertentes
-afetadas (alinhar com `../create-application/references/testing.md`); a suíte tem de ficar **verde**,
-além de lint, build e arranque. Terminar com um relatório do que mudou, dos bugs corrigidos e do
-resultado dos testes.
+Confirm everything works: run the existing tests and **create the missing ones** for the affected
+facets (align with `../create-application/references/testing.md`); the suite must end **green**, plus
+lint, build and startup. Finish with a report of what changed, the bugs fixed and the test results.
 
-## Referências
+## References
 
-- **`references/assessment.md`** — como analisar o projeto: tipo de app, mapa de desvios à
-  metodologia-alvo e deteção de bugs/erros. Ler no passo 1.
-- **`references/restructure-plan.md`** — como estruturar o plano faseado (ordem, preservação de
-  comportamento, secção de bugs). Ler no passo 2.
-- **`references/execution.md`** — execução segura: rede de segurança, fases, validação e relatório.
-  Ler nos passos 4–6.
+- **`references/assessment.md`** — how to analyze the project: app type, deviation map against the
+  target methodology and detection of bugs/errors. Read in step 1.
+- **`references/restructure-plan.md`** — how to structure the phased plan (order, behavior
+  preservation, bugs section). Read in step 2.
+- **`references/execution.md`** — safe execution: safety net, phases, validation and report. Read in
+  steps 4–6.

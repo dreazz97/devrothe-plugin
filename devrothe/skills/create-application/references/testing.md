@@ -1,58 +1,58 @@
-# Estratégia de testes
+# Testing strategy
 
-Ler na implementação (passo 6 do SKILL.md). Cada feature construída traz testes reais que exercem o
-seu comportamento. Um teste que não falha quando o comportamento parte não é um teste — evitar
-snapshots vazios, asserts triviais (`expect(true).toBe(true)`) e mocks que devolvem o resultado
-esperado sem exercer a lógica real.
+Read during implementation (step 6 of SKILL.md). Every feature built ships with real tests that
+exercise its behavior. A test that does not fail when the behavior breaks is not a test — avoid empty
+snapshots, trivial asserts (`expect(true).toBe(true)`) and mocks that return the expected result
+without exercising the real logic.
 
 ## Contents
-- O que testar por camada
-- Convenções e localização
-- Ferramentas por stack
-- Loop de implementação
-- Gate de conclusão
+- What to test per layer
+- Conventions and location
+- Tools per stack
+- Implementation loop
+- Completion gate
 
-## O que testar por camada
+## What to test per layer
 
-- **Lógica de negócio / services / utils** → testes **unitários**: rápidos, sem I/O; mockar apenas as
-  fronteiras (BD, rede). Cobrir caminho feliz + erros/edge cases relevantes.
-- **Endpoints / route handlers** → testes de **integração**: chamam a app real (supertest/httpx)
-  contra uma BD de teste. Verificar status, payload, validação e autorização.
-- **Componentes de UI com lógica** → testes de **componente** (Testing Library): interação do
-  utilizador e mudanças de estado/render, não a estrutura interna.
-- **Fluxos críticos de utilizador** (login, checkout, criar/editar recurso) → **e2e** (Playwright).
+- **Business logic / services / utils** → **unit** tests: fast, no I/O; mock only the boundaries (DB,
+  network). Cover the happy path + relevant errors/edge cases.
+- **Endpoints / route handlers** → **integration** tests: call the real app (supertest/httpx) against
+  a test DB. Check status, payload, validation and authorization.
+- **UI components with logic** → **component** tests (Testing Library): user interaction and
+  state/render changes, not the internal structure.
+- **Critical user flows** (login, checkout, create/edit resource) → **e2e** (Playwright).
 
-Priorizar comportamento que importa; não perseguir 100% de cobertura. Cada feature do plano (passo 3)
-deve sair da implementação com pelo menos os testes da sua camada principal a passar.
+Prioritize behavior that matters; do not chase 100% coverage. Each feature in the plan (step 3) should
+come out of implementation with at least its main-layer tests passing.
 
-## Convenções e localização
+## Conventions and location
 
-- **Frontend (Next.js, React+Vite)**: unitários/componente em `tests/unit/` (ou colocados como
-  `*.test.tsx` junto ao código); e2e em `tests/e2e/`.
-- **Backend (Express)**: unitários em `tests/unit/`; integração (supertest sobre `app.ts`) em
+- **Frontend (Next.js, React+Vite)**: unit/component in `tests/unit/` (or colocated as `*.test.tsx`
+  next to the code); e2e in `tests/e2e/`.
+- **Backend (Express)**: unit in `tests/unit/`; integration (supertest over `app.ts`) in
   `tests/integration/`.
-- **Backend (FastAPI)**: unitários em `tests/unit/`; integração (httpx sobre a app) em
+- **Backend (FastAPI)**: unit in `tests/unit/`; integration (httpx over the app) in
   `tests/integration/`.
-- Nomes: `<alvo>.test.ts` / `<alvo>.spec.ts` (JS/TS); `test_<alvo>.py` (Python).
+- Names: `<target>.test.ts` / `<target>.spec.ts` (JS/TS); `test_<target>.py` (Python).
 
-## Ferramentas por stack
+## Tools per stack
 
-| Stack | Unit / componente | Integração | E2E |
-|-------|-------------------|-----------|-----|
+| Stack | Unit / component | Integration | E2E |
+|-------|------------------|-------------|-----|
 | Next.js / React+Vite | Vitest + @testing-library/react + jsdom | — | Playwright |
-| Express/Node | Vitest | supertest | (e2e no frontend) |
-| FastAPI/Python | pytest | httpx (TestClient/AsyncClient) | (e2e no frontend) |
+| Express/Node | Vitest | supertest | (e2e in the frontend) |
+| FastAPI/Python | pytest | httpx (TestClient/AsyncClient) | (e2e in the frontend) |
 
-Para integração com BD, usar uma base de dados de teste descartável (ex.: serviço Postgres dedicado do
-Docker Compose ou schema isolado) e limpar o estado entre testes. Não correr testes contra a BD de dev.
+For DB integration, use a disposable test database (e.g., a dedicated Docker Compose Postgres service
+or an isolated schema) and clean the state between tests. Do not run tests against the dev DB.
 
-## Loop de implementação
+## Implementation loop
 
-Para cada fatia do plano: escrever o código → escrever/ajustar os testes → correr → corrigir →
-repetir até passar. Só depois passar à fatia seguinte. Manter a suíte sempre a compilar.
+For each slice of the plan: write the code → write/adjust the tests → run → fix → repeat until it
+passes. Only then move to the next slice. Keep the suite compiling at all times.
 
-## Gate de conclusão
+## Completion gate
 
-A implementação de uma feature só está concluída quando os seus testes passam. A tarefa global só está
-concluída quando a **suíte completa está verde**, além de lint e build. Nunca marcar como feito com
-testes a falhar, nem desligá-los com `skip`/`xfail`/`.only` sem justificação explícita ao utilizador.
+A feature's implementation is only done when its tests pass. The overall task is only done when the
+**full suite is green**, plus lint and build. Never mark as done with failing tests, nor disable them
+with `skip`/`xfail`/`.only` without explicit justification to the user.

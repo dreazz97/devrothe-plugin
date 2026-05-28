@@ -1,52 +1,52 @@
-# Plano de reestruturação
+# Restructuring plan
 
-Transformar a saída da análise (assessment.md) num plano faseado, de baixo risco para alto, preservando
-o comportamento da aplicação.
+Turn the analysis output (assessment.md) into a phased plan, from low to high risk, preserving the
+application's behavior.
 
 ## Contents
-- Princípios
-- Ordem das fases
-- Estrutura de cada fase
-- Secção obrigatória de bugs/erros
+- Principles
+- Phase order
+- Structure of each phase
+- Mandatory bugs/errors section
 
-## Princípios
+## Principles
 
-- **Preservar comportamento**: refactors são equivalência funcional; a única mudança de comportamento
-  permitida é a correção dos bugs listados.
-- **Incremental**: fatias pequenas e validáveis; nada de "big bang".
-- **Baixo risco primeiro**: começar pelo que é seguro e desbloqueia o resto.
-- **Migrações pesadas são opt-in**: uma troca de framework (ex.: CRA → Vite, JS → TS em massa) é
-  assinalada à parte e só avança com aprovação explícita; preferir migração faseada (strangler) a
-  reescrever tudo de uma vez.
+- **Preserve behavior**: refactors are functional equivalence; the only allowed behavior change is
+  fixing the listed bugs.
+- **Incremental**: small, verifiable slices; no "big bang".
+- **Low risk first**: start with what is safe and unblocks the rest.
+- **Heavy migrations are opt-in**: a framework swap (e.g., CRA → Vite, mass JS → TS) is flagged
+  separately and only proceeds with explicit approval; prefer a phased (strangler) migration over
+  rewriting everything at once.
 
-## Ordem das fases
+## Phase order
 
-Sugestão (ajustar ao projeto e às vertentes detetadas):
+Suggestion (adjust to the project and the detected facets):
 
-1. **Baseline + rede de segurança** — garantir que se sabe arrancar a app; criar branch/commit ou
-   backup (ver execution.md).
-2. **Bugs bloqueantes** — corrigir o que impede build/arranque, para refatorar sobre código que corre.
-3. **Tooling base** — TypeScript, pnpm, ESLint + Prettier, scripts de `dev/build/lint/test`.
-4. **Alinhamento de stack/dependências** — UI (Tailwind + shadcn/ui + lucide-react, framer-motion,
-   next-themes, sonner), Zod + React Hook Form, TanStack Query, ORM (Prisma/SQLAlchemy) sobre Postgres.
-5. **Estrutura de pastas** — migrar para feature-first robusta (ver `../create-application/references/`
-   `web-stack.md` ou `app-stack.md`), movendo o código por domínio.
-6. **Módulos** — alinhar auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging,
-   payments, email conforme aplicável (ver `../create-application/references/modules.md`).
-7. **Testes** — alinhar/adicionar a camada de testes (ver `../create-application/references/testing.md`).
-8. **Restantes bugs/qualidade** — corrigir bugs não-bloqueantes e remover dead code/anti-padrões.
-9. **Docs** — atualizar o `README.md` para refletir o estado final.
+1. **Baseline + safety net** — make sure you know how to start the app; create a branch/commit or
+   backup (see execution.md).
+2. **Blocking bugs** — fix what prevents build/startup, so you refactor over code that runs.
+3. **Base tooling** — TypeScript, pnpm, ESLint + Prettier, `dev/build/lint/test` scripts.
+4. **Stack/dependency alignment** — UI (Tailwind + shadcn/ui + lucide-react, framer-motion,
+   next-themes, sonner), Zod + React Hook Form, TanStack Query, ORM (Prisma/SQLAlchemy) over Postgres.
+5. **Folder structure** — migrate to robust feature-first (see `../create-application/references/`
+   `web-stack.md` or `app-stack.md`), moving the code by domain.
+6. **Modules** — align auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments,
+   email as applicable (see `../create-application/references/modules.md`).
+7. **Tests** — align/add the test layer (see `../create-application/references/testing.md`).
+8. **Remaining bugs/quality** — fix non-blocking bugs and remove dead code/anti-patterns.
+9. **Docs** — update the `README.md` to reflect the final state.
 
-## Estrutura de cada fase
+## Structure of each phase
 
-Para cada fase, registar (e criar tarefa com `TaskCreate`):
-- **Objetivo** e ficheiros/áreas afetadas.
-- **Mudanças** concretas.
-- **Validação** (como confirmar que continua a funcionar: build/lint/testes/arranque).
-- **Risco / reversão** (o que fazer se correr mal).
+For each phase, record (and create a task with `TaskCreate`):
+- **Goal** and files/areas affected.
+- Concrete **changes**.
+- **Validation** (how to confirm it still works: build/lint/tests/startup).
+- **Risk / rollback** (what to do if it goes wrong).
 
-## Secção obrigatória de bugs/erros
+## Mandatory bugs/errors section
 
-O plano inclui sempre uma secção com **todos os bugs/erros detetados na análise**, cada um com:
-severidade, sintoma, causa provável, fase em que será corrigido e como será validado. Bloqueantes vão
-para a fase 2; os restantes para a fase 8 (ou para a fase do módulo a que pertencem).
+The plan always includes a section with **all bugs/errors detected in the analysis**, each with:
+severity, symptom, likely cause, the phase in which it will be fixed and how it will be validated.
+Blocking ones go to phase 2; the rest to phase 8 (or to the phase of the module they belong to).

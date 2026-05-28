@@ -1,30 +1,30 @@
-# Deteção e execução de testes
+# Test detection and execution
 
-Como descobrir se há testes, como corrê-los e como interpretar os resultados. **Preferir sempre o
-comando definido pelo projeto** (script no manifesto) a adivinhar um comando.
+How to find out whether there are tests, how to run them and how to interpret the results. **Always
+prefer the command defined by the project** (script in the manifest) over guessing a command.
 
 ## Contents
-- O que procurar
-- Comandos por ecossistema
-- Cobertura
-- Interpretar resultados
+- What to look for
+- Commands per ecosystem
+- Coverage
+- Interpreting results
 
-## O que procurar
+## What to look for
 
-Três sinais (qualquer um conta como "tem testes"):
+Three signals (any one counts as "has tests"):
 
-1. **Scripts de teste** — `scripts.test`/`test:*` no `package.json`; alvo `test` num `Makefile`;
-   scripts shell de teste; `[tool.pytest]`/`[tool.poetry.scripts]` no `pyproject.toml`.
-2. **Frameworks de teste** nas dependências — ver tabela abaixo.
-3. **Ficheiros de teste** — padrões: `*.test.*`, `*.spec.*`, `__tests__/`, `tests/`, `test/`,
-   `test_*.py`, `*_test.py`, `*_test.go`, `*Tests.cs`, `*Test.java`.
+1. **Test scripts** — `scripts.test`/`test:*` in `package.json`; a `test` target in a `Makefile`;
+   shell test scripts; `[tool.pytest]`/`[tool.poetry.scripts]` in `pyproject.toml`.
+2. **Test frameworks** in the dependencies — see the table below.
+3. **Test files** — patterns: `*.test.*`, `*.spec.*`, `__tests__/`, `tests/`, `test/`, `test_*.py`,
+   `*_test.py`, `*_test.go`, `*Tests.cs`, `*Test.java`.
 
-## Comandos por ecossistema
+## Commands per ecosystem
 
-| Ecossistema | Frameworks comuns | Detetar | Correr |
-|-------------|-------------------|---------|--------|
-| Node/JS/TS | Vitest, Jest, Mocha, Playwright, Cypress | devDeps + `scripts.test` | `pnpm test` / `npm test` (ou o script definido) |
-| Python | pytest, unittest | `pytest` instalado, `pytest.ini`/`pyproject` | `pytest` |
+| Ecosystem | Common frameworks | Detect | Run |
+|-----------|-------------------|--------|-----|
+| Node/JS/TS | Vitest, Jest, Mocha, Playwright, Cypress | devDeps + `scripts.test` | `pnpm test` / `npm test` (or the defined script) |
+| Python | pytest, unittest | `pytest` installed, `pytest.ini`/`pyproject` | `pytest` |
 | Go | testing (stdlib) | `*_test.go` | `go test ./...` |
 | Java/Kotlin | JUnit | `src/test/...` | `mvn test` / `gradle test` |
 | Rust | testing (stdlib) | `#[test]` | `cargo test` |
@@ -32,20 +32,21 @@ Três sinais (qualquer um conta como "tem testes"):
 | PHP | PHPUnit/Pest | `phpunit.xml` | `vendor/bin/phpunit` |
 | Ruby | RSpec/Minitest | `spec/`/`test/` | `bundle exec rspec` / `rake test` |
 
-Se for preciso **instalar** um framework (Ramo B, projeto sem testes), escolher o idiomático do stack:
-- Node/TS frontend: Vitest + Testing Library (+ Playwright para e2e).
+If a framework needs to be **installed** (Branch B, project without tests), pick the idiomatic one for
+the stack:
+- Node/TS frontend: Vitest + Testing Library (+ Playwright for e2e).
 - Node/TS backend: Vitest + supertest.
-- Python: pytest (+ httpx para APIs).
-- Go/Rust/.NET/Java: usar o framework de teste padrão do ecossistema.
+- Python: pytest (+ httpx for APIs).
+- Go/Rust/.NET/Java: use the ecosystem's standard test framework.
 
-## Cobertura
+## Coverage
 
-Ativar cobertura quando disponível, para enriquecer o relatório:
+Enable coverage when available, to enrich the report:
 - Vitest: `--coverage` · Jest: `--coverage` · pytest: `--cov` (pytest-cov) · Go: `-cover` ·
   .NET: `--collect:"XPlat Code Coverage"`.
 
-## Interpretar resultados
+## Interpreting results
 
-Capturar do output: total de testes, passou/falhou/ignorado, duração e cobertura (se houver). Listar
-cada falha com o nome do teste e o motivo resumido. Não inferir "verde" se o comando saiu com código de
-erro — usar o exit code como fonte de verdade.
+Capture from the output: total tests, passed/failed/skipped, duration and coverage (if any). List each
+failure with the test name and a short reason. Do not infer "green" if the command exited with an error
+code — use the exit code as the source of truth.

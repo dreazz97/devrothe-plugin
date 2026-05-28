@@ -1,66 +1,66 @@
 # Devrothe
 
-Plugin de **skills de apoio ao desenvolvimento** para o [Claude Code](https://code.claude.com).
-Distribuído como marketplace a partir do GitHub (`dreazz97/devrothe-plugin`).
+Plugin of **development-support skills** for [Claude Code](https://code.claude.com).
+Distributed as a marketplace from GitHub (`dreazz97/devrothe-plugin`).
 
-Estado atual: 3 skills — [`create-application`](#skill-create-application),
-[`test-application`](#skill-test-application) e [`refactor-application`](#skill-refactor-application).
+Current state: 3 skills — [`create-application`](#skill-create-application),
+[`test-application`](#skill-test-application) and [`refactor-application`](#skill-refactor-application).
 
 ---
 
-## Conteúdo
+## Contents
 
 ```
 Devrothe Plugin/
-├── .claude-plugin/marketplace.json     # manifesto do marketplace
+├── .claude-plugin/marketplace.json     # marketplace manifest
 └── devrothe/                           # plugin
     ├── .claude-plugin/plugin.json
     └── skills/
         ├── create-application/
-        │   ├── SKILL.md                # entrevista + plano + scaffold + implementação
+        │   ├── SKILL.md                # interview + plan + scaffold + implementation
         │   └── references/
-        │       ├── web-stack.md        # stack Next.js
-        │       ├── app-stack.md        # stack React+Vite + backend
-        │       ├── testing.md          # estratégia de testes
-        │       └── modules.md          # módulos condicionais
+        │       ├── web-stack.md        # Next.js stack
+        │       ├── app-stack.md        # React+Vite + backend stack
+        │       ├── testing.md          # testing strategy
+        │       └── modules.md          # conditional modules
         ├── test-application/
-        │   ├── SKILL.md                # detetar/correr testes ou analisar + criar + reportar
+        │   ├── SKILL.md                # detect/run tests or analyze + create + report
         │   └── references/
-        │       ├── app-analysis.md     # classificar o tipo de aplicação
-        │       ├── detect-and-run.md   # detetar e executar testes por ecossistema
-        │       └── test-plan.md        # o que testar por vertente
+        │       ├── app-analysis.md     # classify the application type
+        │       ├── detect-and-run.md   # detect and run tests per ecosystem
+        │       └── test-plan.md        # what to test per facet
         └── refactor-application/
-            ├── SKILL.md                # analisar + plano de reestruturação + executar + validar
+            ├── SKILL.md                # analyze + restructuring plan + execute + validate
             └── references/
-                ├── assessment.md       # análise: tipo de app, desvios e bugs
-                ├── restructure-plan.md # plano faseado de reestruturação
-                └── execution.md        # execução segura e validação
+                ├── assessment.md       # analysis: app type, deviations and bugs
+                ├── restructure-plan.md # phased restructuring plan
+                └── execution.md        # safe execution and validation
 ```
 
 ---
 
-## Instalação
+## Installation
 
-A partir do Claude Code:
+From Claude Code:
 
 ```
 /plugin marketplace add dreazz97/devrothe-plugin
 /plugin install devrothe@devrothe
 ```
 
-O formato de instalação é `plugin@marketplace` — aqui ambos se chamam `devrothe`.
+The install format is `plugin@marketplace` — here both are called `devrothe`.
 
-### Atualizar após alterações
+### Updating after changes
 
-Depois de novos commits no repositório:
+After new commits in the repository:
 
 ```
 /plugin marketplace update devrothe
 ```
 
-### Desenvolvimento local (opcional)
+### Local development (optional)
 
-Para iterar sobre o plugin sem passar pelo GitHub, adiciona o marketplace por caminho local:
+To iterate on the plugin without going through GitHub, add the marketplace by local path:
 
 ```
 /plugin marketplace add "/Volumes/Samsung PSSD T7 Shield Media/Novlok/Devrothe Plugin"
@@ -68,150 +68,156 @@ Para iterar sobre o plugin sem passar pelo GitHub, adiciona o marketplace por ca
 
 ---
 
-## Comandos / Skills
+## Commands / Skills
 
-| Comando | O que faz |
-|---------|-----------|
-| `/create-application` | Entrevista, escolhe o stack, planeia, faz o scaffold e implementa o projeto com testes reais. |
-| `/test-application` | Deteta e corre os testes da app e reporta; se não houver, analisa a app, cria testes por vertente e reporta. |
-| `/refactor-application` | Analisa uma app existente, planeia a reestruturação para o stack/práticas da `create-application`, executa (com aprovação) e valida com testes. |
+| Command | What it does |
+|---------|--------------|
+| `/create-application` | Interviews, picks the stack, plans, scaffolds and implements the project with real tests. |
+| `/test-application` | Detects and runs the app's tests and reports; if there are none, analyzes the app, creates tests per facet and reports. |
+| `/refactor-application` | Analyzes an existing app, plans the restructuring toward the `create-application` stack/practices, executes (with approval) and validates with tests. |
 
-As skills também disparam por linguagem natural (ver gatilhos abaixo) — não é obrigatório usar o comando com barra.
+The skills also trigger via natural language (see the triggers below) — using the slash command is not
+mandatory.
 
 ---
 
 ## Skill: `create-application`
 
-Arranca um projeto novo de ponta a ponta: faz perguntas, resolve o stack, planeia as features,
-confirma contigo e depois **inicializa e implementa o projeto a partir do plano — com testes reais**.
-Não fica pelo scaffold: constrói a app feature a feature e só dá a tarefa por concluída com a suíte de
-testes verde.
+Starts a new project end to end: asks questions, resolves the stack, plans the features, confirms with
+you and then **initializes and implements the project from the plan — with real tests**. It does not
+stop at the scaffold: it builds the app feature by feature and only considers the task done with a
+green test suite.
 
-### Como invocar
+### How to invoke
 
-- Comando: `/create-application`
-- Frases-gatilho: *"novo projeto"*, *"iniciar desenvolvimento"*, *"começar um projeto"*,
-  *"que stack uso"*, *"setup inicial"*, *"scaffold"*.
+- Command: `/create-application`
+- Trigger phrases: *"new project"*, *"start development"*, *"start a project"*, *"what stack should I
+  use"*, *"scaffold"* (plus the Portuguese equivalents).
 
-### O que te vai perguntar
+### What it will ask you
 
-Primeiro o **scope funcional** — o que a app faz: features principais, entidades/dados centrais,
-fluxos-chave e páginas/endpoints obrigatórios (é o que alimenta o plano e a implementação). Depois as
-decisões de stack:
+First the **functional scope** — what the app does: main features, core entities/data, key flows and
+mandatory pages/endpoints (this feeds the plan and the implementation). Then the stack decisions:
 
-1. **Tipo de projeto** (decide o stack-base):
-   - PoC, landing page, e-commerce, site institucional/blog → **Next.js**
-   - Web application interativa (dashboard, SaaS, ferramenta interna) → **React + Vite + backend**
-2. **Persistência de dados?** → PostgreSQL (ligado por defeito)
-3. **Armazenamento de imagens/vídeos?** → MinIO
-4. **Autenticação de utilizadores?** → escolha (radio): Keycloak (OIDC), JWT próprio em cookies httpOnly, ou deixar o AI escolher
-5. **Deploy em Kubernetes?** → Prometheus + OpenTelemetry
-6. **Logging estruturado?** → Pino (Node) / structlog (Python)
-7. **Pagamentos?** → Stripe
-8. **Email transacional?** → Resend
+1. **Project type** (decides the base stack):
+   - PoC, landing page, e-commerce, institutional site/blog → **Next.js**
+   - Interactive web application (dashboard, SaaS, internal tool) → **React + Vite + backend**
+2. **Data persistence?** → PostgreSQL (on by default)
+3. **Image/video storage?** → MinIO
+4. **User authentication?** → choice (radio): Keycloak (OIDC), own JWT in httpOnly cookies, or let the AI choose
+5. **Deploy on Kubernetes?** → Prometheus + OpenTelemetry
+6. **Structured logging?** → Pino (Node) / structlog (Python)
+7. **Payments?** → Stripe
+8. **Transactional email?** → Resend
 
-### Stacks que escolhe
+### Stacks it chooses
 
-**Next.js** (PoC / sites tradicionais):
+**Next.js** (PoC / traditional sites):
 Next.js · TypeScript · Tailwind CSS + shadcn/ui + lucide-react · framer-motion · next-themes · sonner ·
 Zod + React Hook Form · TanStack Query · Prisma + PostgreSQL.
 
 **React + Vite + backend** (web applications):
-React + Vite com o mesmo stack de UI acima, mais backend **Express/Node** ou **FastAPI/Python**
-(decidido em função do projeto). ORM: **Prisma** (Node) ou **SQLAlchemy + Alembic** (Python).
+React + Vite with the same UI stack above, plus an **Express/Node** or **FastAPI/Python** backend
+(decided based on the project). ORM: **Prisma** (Node) or **SQLAlchemy + Alembic** (Python).
 
-### Módulos condicionais
+### Conditional modules
 
-Ativados conforme as respostas: `auth` (Keycloak ou JWT httpOnly), `storage` (MinIO/S3), `observability`
-(Prometheus + OpenTelemetry para Kubernetes), `logging` (Pino/structlog), `payments` (Stripe),
-`email` (Resend) e `compose` (serviços de dev em Docker Compose).
+Activated based on the answers: `auth` (Keycloak or JWT httpOnly), `storage` (MinIO/S3),
+`observability` (Prometheus + OpenTelemetry for Kubernetes), `logging` (Pino/structlog), `payments`
+(Stripe), `email` (Resend) and `compose` (dev services in Docker Compose).
 
-### Defaults transversais (sempre)
+### Cross-cutting defaults (always)
 
-TypeScript · pnpm · ESLint + Prettier · Docker Compose para dev · Vitest + Playwright (pytest em Python).
+TypeScript · pnpm · ESLint + Prettier · Docker Compose for dev · Vitest + Playwright (pytest in Python).
 
-Cada solução é gerada com uma **estrutura de pastas robusta e feature-first** (organização por
-domínio, separação de camadas UI/servidor/dados e localizações previsíveis para schemas, tipos,
-config e testes), definida nos ficheiros de referência de cada stack. Os testes não são só andaime: a
-implementação escreve **testes reais** por feature (ver `devrothe/skills/create-application/references/testing.md`).
+Every solution is generated with a **robust, feature-first folder structure** (organized by domain,
+separation of UI/server/data layers and predictable locations for schemas, types, config and tests),
+defined in each stack's reference files. Tests are not just scaffolding: the implementation writes
+**real tests** per feature (see `devrothe/skills/create-application/references/testing.md`).
 
 ### Workflow
 
-1. Entrevista (scope funcional + decisões de stack)
-2. Resolução do stack
-3. Plano de features (registado em tarefas)
-4. Confirmação contigo (stack + plano; nada é escrito/instalado antes do "sim")
-5. Scaffold (projeto + dependências + configs + `README.md`)
-6. Implementação feature a feature, com testes reais
-7. Verificação — lint, build, arranque **e suíte de testes verde** (gate de conclusão)
+1. Interview (functional scope + stack decisions)
+2. Stack resolution
+3. Feature plan (recorded as tasks)
+4. Confirmation with you (stack + plan; nothing is written/installed before the "yes")
+5. Scaffold (project + dependencies + configs + `README.md`)
+6. Feature-by-feature implementation, with real tests
+7. Verification — lint, build, startup **and a green test suite** (completion gate)
 
-> **Regras:** o `README.md` do projeto gerado é mantido sempre sincronizado com o stack/dependências/
-> env/comandos; e cada feature implementada traz testes reais, sendo a suíte verde um gate de conclusão.
+> **Rules:** the generated project's `README.md` is kept in sync with the stack/dependencies/env/
+> commands; and every implemented feature ships with real tests, with the green suite as a completion
+> gate.
 
 ---
 
 ## Skill: `test-application`
 
-Valida e executa os testes de uma aplicação existente e, se não houver, analisa a app, planeia e cria
-testes reais por vertente, executa-os (com autorização) e apresenta um relatório.
+Validates and runs an existing application's tests and, if there are none, analyzes the app, plans and
+creates real tests per facet, runs them (with authorization) and presents a report.
 
-### Como invocar
+### How to invoke
 
-- Comando: `/test-application`
-- Frases-gatilho: *"testa a aplicação"*, *"corre os testes"*, *"a app tem testes?"*,
-  *"valida os testes"*, *"criar testes"*, *"executar testes"*.
+- Command: `/test-application`
+- Trigger phrases: *"test the application"*, *"run the tests"*, *"does the app have tests?"*,
+  *"validate the tests"*, *"create tests"*, *"test coverage"* (plus the Portuguese equivalents).
 
-### Fluxo
+### Flow
 
-1. **Deteta** os testes existentes e **mapeia a cobertura por vertente** (UI, backend/API, microserviço,
-   serviço, CLI/biblioteca, fullstack, mobile, dados/ML).
-2. Escolhe o ramo conforme a cobertura:
-   - **Tudo coberto** → executa a suíte e apresenta o relatório.
-   - **Nada coberto** → informa o tipo de app e a ausência de testes; pergunta (Sim/Não) se queres
-     criar; se sim, planeia por vertente, cria (após aprovação), pergunta (Sim/Não) e executa tudo.
-   - **Cobertura parcial** → informa que vertentes têm e não têm testes; cria (com autorização) **só as
-     que faltam**; depois executa **todos os testes — existentes + acabados de criar** — e reporta.
-3. **Relatório final** com totais, falhas e cobertura. Os testes criados são reais (exercem
-   comportamento) — sem placeholders nem snapshots vazios.
+1. **Detects** the existing tests and **maps coverage per facet** (UI, backend/API, microservice,
+   service, CLI/library, fullstack, mobile, data/ML).
+2. Picks the branch based on coverage:
+   - **All covered** → runs the suite and presents the report.
+   - **None covered** → reports the app type and the absence of tests; asks (Yes/No) whether you want
+     to create them; if yes, plans per facet, creates (after approval), asks (Yes/No) and runs
+     everything.
+   - **Partial coverage** → reports which facets have and do not have tests; creates (with
+     authorization) **only the missing ones**; then runs **all tests — existing + just created** — and
+     reports.
+3. **Final report** with totals, failures and coverage. Created tests are real (they exercise behavior)
+   — no placeholders or empty snapshots.
 
 ---
 
 ## Skill: `refactor-application`
 
-Pega numa aplicação existente — tipicamente feita por alguém sem experiência — e reestrutura-a para os
-fundamentos, o stack e a organização da `create-application`, corrigindo pelo caminho os bugs/erros que
-já lá estavam. Reutiliza a metodologia-alvo da `create-application` e a análise/testes da
-`test-application`.
+Takes an existing application — typically built by someone without experience — and restructures it to
+the fundamentals, stack and organization of `create-application`, fixing along the way the bugs/errors
+that were already there. Reuses the target methodology of `create-application` and the analysis/tests
+of `test-application`.
 
-### Como invocar
+### How to invoke
 
-- Comando: `/refactor-application`
-- Frases-gatilho: *"reestrutura a app"*, *"alinha com a create-application"*, *"normaliza o projeto"*,
-  *"refatora a organização"*, *"arranja esta aplicação"*.
+- Command: `/refactor-application`
+- Trigger phrases: *"restructure the app"*, *"align with create-application"*, *"normalize the
+  project"*, *"refactor the organization"*, *"fix up this application"* (plus the Portuguese
+  equivalents).
 
-### Fluxo
+### Flow
 
-1. **Análise** — tipo de app e vertentes, mapa de desvios à metodologia-alvo, e deteção de bugs/erros.
-2. **Plano faseado** de reestruturação (baixo risco primeiro), com uma secção dedicada aos bugs a
-   corrigir.
-3. **Confirmação** — apresenta plano, esforço e riscos; nada é alterado antes do "sim" (migrações
-   pesadas podem ser aprovadas fase a fase).
-4. **Rede de segurança** — branch/commit (ou backup) antes de mexer.
-5. **Execução** incremental, preservando o comportamento e validando a cada fase; README mantido a par.
-6. **Validação** — corre os testes existentes e cria os que faltarem; suíte verde + lint + build +
-   arranque, e relatório final (antes → depois, bugs resolvidos, resultados dos testes).
+1. **Analysis** — app type and facets, deviation map against the target methodology, and bug/error
+   detection.
+2. **Phased restructuring plan** (low risk first), with a section dedicated to the bugs to fix.
+3. **Confirmation** — presents the plan, effort and risks; nothing is changed before the "yes" (heavy
+   migrations can be approved phase by phase).
+4. **Safety net** — branch/commit (or backup) before touching anything.
+5. **Execution** incrementally, preserving behavior and validating at each phase; README kept in sync.
+6. **Validation** — runs the existing tests and creates the missing ones; green suite + lint + build +
+   startup, and a final report (before → after, bugs resolved, test results).
 
-> Reestrutura sem mudar funcionalidades — a única mudança de comportamento permitida é a correção dos
-> bugs listados no plano.
+> Restructures without changing functionality — the only allowed behavior change is fixing the bugs
+> listed in the plan.
 
 ---
 
-## Desenvolvimento do plugin
+## Plugin development
 
-- Manifesto do marketplace: `.claude-plugin/marketplace.json`
-- Manifesto do plugin: `devrothe/.claude-plugin/plugin.json`
-- As skills seguem as boas práticas oficiais da Anthropic: descrição em 3.ª pessoa com gatilhos,
-  *progressive disclosure* (SKILL.md lean + referências a um nível de profundidade), linguagem
-  imperativa e justificação do porquê das regras.
+- Marketplace manifest: `.claude-plugin/marketplace.json`
+- Plugin manifest: `devrothe/.claude-plugin/plugin.json`
+- The skills follow Anthropic's official best practices: third-person description with triggers,
+  *progressive disclosure* (lean SKILL.md + references one level deep), imperative language and
+  justification of the *why* behind the rules.
+- **Language convention**: skill bodies, descriptions and docs are written in English, with **bilingual
+  triggers (EN + PT)** so they still fire for Portuguese phrasing. See `CLAUDE.md`.
 
-Após editar qualquer ficheiro, recarregar com `/plugin marketplace update devrothe`.
+After editing any file, reload with `/plugin marketplace update devrothe`.

@@ -1,54 +1,54 @@
-# Análise do projeto
+# Project analysis
 
-Objetivo: perceber o estado atual sem o alterar e produzir três saídas — tipo de app, mapa de desvios
-à metodologia-alvo e lista de bugs/erros. **Não editar nada nesta fase.**
+Goal: understand the current state without changing it and produce three outputs — app type, deviation
+map against the target methodology and a list of bugs/errors. **Do not edit anything in this phase.**
 
 ## Contents
-- Estado atual e tipo de app
-- Mapa de desvios à metodologia-alvo
-- Deteção de bugs/erros
-- Saída da análise
+- Current state and app type
+- Deviation map against the target methodology
+- Bug/error detection
+- Analysis output
 
-## Estado atual e tipo de app
+## Current state and app type
 
-- Detetar linguagem(ns), gestor de dependências, frameworks e scripts (manifestos, lockfiles).
-- Classificar o tipo de app e as vertentes com `../test-application/references/app-analysis.md`
-  (UI/frontend, backend/API, microserviço, serviço, CLI/biblioteca, fullstack, etc.).
-- Tentar arrancar/instalar para conhecer o baseline (compila? arranca? testes existentes passam?).
+- Detect the language(s), dependency manager, frameworks and scripts (manifests, lockfiles).
+- Classify the app type and facets with `../test-application/references/app-analysis.md`
+  (UI/frontend, backend/API, microservice, service, CLI/library, fullstack, etc.).
+- Try to start/install to learn the baseline (does it build? does it start? do existing tests pass?).
 
-## Mapa de desvios à metodologia-alvo
+## Deviation map against the target methodology
 
-Comparar o projeto com o destino da `create-application`. Para cada item, marcar **OK / desvio**:
+Compare the project with the `create-application` destination. For each item, mark **OK / deviation**:
 
-| Dimensão | Alvo |
-|----------|------|
-| Linguagem | TypeScript em todo o JS |
+| Dimension | Target |
+|-----------|--------|
+| Language | TypeScript in all JS |
 | Package manager | pnpm |
 | Lint/format | ESLint + Prettier (+ prettier-plugin-tailwindcss) |
-| Framework base | Next.js (sites/PoC) ou React+Vite + backend (web apps) |
+| Base framework | Next.js (sites/PoC) or React+Vite + backend (web apps) |
 | UI | Tailwind + shadcn/ui + lucide-react, framer-motion, next-themes, sonner |
-| Forms/validação | Zod + React Hook Form |
+| Forms/validation | Zod + React Hook Form |
 | Server-state | TanStack Query |
-| ORM / BD | Prisma (Node) ou SQLAlchemy+Alembic (Python) sobre PostgreSQL |
-| Estrutura de pastas | feature-first robusta (ver web-stack.md / app-stack.md) |
-| Testes | camada real (ver testing.md) |
-| Infra de dev | Docker Compose (Postgres, e MinIO/Keycloak se aplicável) |
-| Módulos | auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments, email |
+| ORM / DB | Prisma (Node) or SQLAlchemy+Alembic (Python) over PostgreSQL |
+| Folder structure | robust feature-first (see web-stack.md / app-stack.md) |
+| Tests | real layer (see testing.md) |
+| Dev infra | Docker Compose (Postgres, and MinIO/Keycloak if applicable) |
+| Modules | auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments, email |
 
-Detalhes do alvo em `../create-application/references/web-stack.md`, `app-stack.md`, `modules.md` e
+Target details in `../create-application/references/web-stack.md`, `app-stack.md`, `modules.md` and
 `testing.md`.
 
-## Deteção de bugs/erros
+## Bug/error detection
 
-Procurar e registar (com severidade):
-- **Bloqueantes**: build falha, erros de tipos (`tsc`), a app não arranca, dependências em falta/quebradas.
-- **Testes**: testes existentes a falhar.
-- **Qualidade/anti-padrões**: erros de lint, código morto, lógica duplicada, componentes/ficheiros
-  gigantes, ausência de tratamento de erros nas fronteiras.
-- **Segurança (red flags)**: segredos hardcoded, tokens em `localStorage`, SQL por concatenação de
-  strings, CORS aberto, validação de input em falta. (Sinalizar; não é uma auditoria completa.)
+Look for and record (with severity):
+- **Blocking**: build fails, type errors (`tsc`), the app does not start, missing/broken dependencies.
+- **Tests**: existing tests failing.
+- **Quality/anti-patterns**: lint errors, dead code, duplicated logic, giant components/files, missing
+  error handling at the boundaries.
+- **Security (red flags)**: hardcoded secrets, tokens in `localStorage`, SQL via string concatenation,
+  open CORS, missing input validation. (Flag them; this is not a full audit.)
 
-## Saída da análise
+## Analysis output
 
-Resumir ao utilizador: tipo de app + vertentes, a tabela de desvios (OK/desvio) e a lista de bugs/erros
-por severidade. Esta saída alimenta o plano (restructure-plan.md).
+Summarize to the user: app type + facets, the deviation table (OK/deviation) and the list of
+bugs/errors by severity. This output feeds the plan (restructure-plan.md).

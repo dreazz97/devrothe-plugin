@@ -1,136 +1,137 @@
 ---
 name: test-application
-description: Valida, executa e (se faltarem) cria testes para a aplicação atual. Deteta os testes existentes e mapeia a cobertura por vertente. Se tudo estiver coberto, corre os testes e reporta. Se faltarem testes — em todas ou só nalgumas vertentes (UI/frontend, backend/API, microserviço, serviço, CLI/biblioteca, fullstack, mobile, dados/ML) — informa o utilizador, propõe e (após aprovação) cria os testes em falta e, no fim e com autorização, executa todos (existentes + criados) e apresenta um relatório. Usar quando o utilizador quer correr os testes, saber se a app tem testes, validar a suíte, ou criar testes. Dispara em "test-application", "testa a aplicação", "corre os testes", "a app tem testes?", "valida os testes", "criar testes", "executar testes", "cobertura de testes".
+description: Validates, runs and (if missing) creates tests for the current application. Detects existing tests and maps coverage per facet. If everything is covered, it runs the tests and reports. If tests are missing — across all or only some facets (UI/frontend, backend/API, microservice, service, CLI/library, fullstack, mobile, data/ML) — it informs the user, proposes and (after approval) creates the missing tests and, at the end and with authorization, runs all of them (existing + created) and presents a report. Use when the user wants to run the tests, know whether the app has tests, validate the suite, or create tests. Triggers on "test-application", "run the tests", "does the app have tests?", "validate the tests", "create tests", "test coverage", and in Portuguese "testa a aplicação", "corre os testes", "a app tem testes?", "criar testes", "executar testes".
 ---
 
 # test-application
 
-Validar e executar os testes da aplicação atual e, onde faltarem, analisar a app, planear e criar
-testes reais por vertente, executá-los (com autorização) e apresentar um relatório.
+Validate and run the current application's tests and, where they are missing, analyze the app, plan
+and create real tests per facet, run them (with authorization) and present a report.
 
-**Regra: testes reais, não placeholders.** Os testes criados exercem comportamento real (caminho feliz
-+ erros/edge cases). Evitar asserts triviais, snapshots vazios ou mocks que devolvem o resultado
-esperado sem exercer a lógica. Porquê: uma suíte verde mas vazia dá falsa confiança.
+**Rule: real tests, not placeholders.** Created tests exercise real behavior (happy path +
+errors/edge cases). Avoid trivial asserts, empty snapshots or mocks that return the expected result
+without exercising the logic. Why: a green but empty suite gives false confidence.
 
-## Fluxo
+## Flow
 
-Copiar este checklist para a resposta e ir marcando. O ramo decide-se pela **cobertura por vertente**.
+Copy this checklist into the response and tick items off. The branch is decided by **coverage per
+facet**.
 
 ```
-- [ ] 0. Contexto — ler CLAUDE.md, memória e READMEs/docs do projeto (se existirem)
-- [ ] 1. Detetar testes + analisar vertentes → mapa de cobertura por vertente
-- [ ] 2. Ramo A (todas as vertentes cobertas) → executar tudo e reportar (passo 8)
-- [ ] 3. Ramos B/C (falta cobertura, total ou parcial) → informar tipo de app + vertentes com/sem testes
-- [ ] 4. Perguntar (opção única Sim/Não) se quer criar os testes em falta
-- [ ] 5. Plano de testes para as vertentes SEM testes → aprovação do utilizador
-- [ ] 6. Criar os testes reais em falta
-- [ ] 7. Perguntar (opção única Sim/Não) se pode executar
-- [ ] 8. Executar TODOS (existentes + criados) e apresentar o relatório
+- [ ] 0. Context — read CLAUDE.md, memory and READMEs/docs of the project (if any)
+- [ ] 1. Detect tests + analyze facets → coverage map per facet
+- [ ] 2. Branch A (all facets covered) → run everything and report (step 8)
+- [ ] 3. Branches B/C (missing coverage, total or partial) → report app type + facets with/without tests
+- [ ] 4. Ask (single choice Yes/No) whether to create the missing tests
+- [ ] 5. Test plan for the facets WITHOUT tests → user approval
+- [ ] 6. Create the missing real tests
+- [ ] 7. Ask (single choice Yes/No) whether it may run
+- [ ] 8. Run ALL (existing + created) and present the report
 ```
 
-### 0. Contexto do projeto
+### 0. Project context
 
-Antes de detetar, procurar e ler os metadados que ajudem a perceber a aplicação:
-- `CLAUDE.md` na raiz e em subpastas, e outros ficheiros de instruções de agentes (`AGENTS.md`,
+Before detecting, look for and read metadata that helps understand the application:
+- `CLAUDE.md` at the root and in subfolders, and other agent instruction files (`AGENTS.md`,
   `.cursor/rules/`, `.github/copilot-instructions.md`).
-- A **memória** do projeto (preferências e decisões já registadas, incluindo as de testes).
-- Ficheiros de texto: `README*`, `docs/`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, ADRs e notas.
+- The project **memory** (preferences and decisions already recorded, including testing ones).
+- Text files: `README*`, `docs/`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, ADRs and notes.
 
-Usar este contexto para informar a análise das vertentes e o plano/criação de testes. Porquê: o README
-e o CLAUDE.md costumam indicar como correr a app e os testes e que convenções seguir.
+Use this context to inform the facet analysis and the test plan/creation. Why: the README and the
+CLAUDE.md usually state how to run the app and the tests and which conventions to follow.
 
-### 1. Detetar e mapear cobertura
+### 1. Detect and map coverage
 
-Detetar frameworks, scripts e ficheiros de teste (ver `references/detect-and-run.md`) **e** classificar
-as vertentes da aplicação (ver `references/app-analysis.md`). Cruzar os dois para construir um **mapa de
-cobertura por vertente**: para cada vertente presente (UI, backend/API, microserviço, etc.), tem testes
-ou não. **Não escrever nem instalar nada nesta fase** — só observar.
+Detect test frameworks, scripts and files (see `references/detect-and-run.md`) **and** classify the
+application's facets (see `references/app-analysis.md`). Cross-reference both to build a **coverage map
+per facet**: for each present facet (UI, backend/API, microservice, etc.), does it have tests or not.
+**Do not write or install anything in this phase** — only observe.
 
-Decidir o ramo a partir do mapa:
-- **Todas** as vertentes têm testes → **Ramo A** (passo 2).
-- **Nenhuma** vertente tem testes → **Ramo B**.
-- **Algumas** têm, outras não → **Ramo C** (cobertura parcial).
+Decide the branch from the map:
+- **All** facets have tests → **Branch A** (step 2).
+- **No** facet has tests → **Branch B**.
+- **Some** have, others do not → **Branch C** (partial coverage).
 
-Os Ramos B e C partilham os passos 3–8. A única diferença é o **âmbito da criação**: no Ramo B criam-se
-testes para todas as vertentes; no Ramo C apenas para as vertentes **sem** testes (as restantes já
-existem e são reutilizadas).
+Branches B and C share steps 3–8. The only difference is the **scope of creation**: in Branch B tests
+are created for all facets; in Branch C only for the facets **without** tests (the rest already exist
+and are reused).
 
-### 2. Ramo A — tudo coberto
+### 2. Branch A — everything covered
 
-Correr a suíte completa usando o comando definido pelo projeto (preferir o script do projeto a
-adivinhar) e seguir para o passo 8 (relatório). Não é preciso pedir autorização: o utilizador invocou a
-skill para validar e executar.
+Run the full suite using the command defined by the project (prefer the project's script over
+guessing) and proceed to step 8 (report). No authorization needed: the user invoked the skill to
+validate and run.
 
-Se a execução falhar por falta de serviços (ex.: base de dados), indicá-lo e sugerir como prepará-los
-(ex.: `docker compose up -d`) em vez de marcar a suíte como partida.
+If the run fails due to missing services (e.g., a database), point it out and suggest how to prepare
+them (e.g., `docker compose up -d`) instead of marking the suite as broken.
 
-### 3. Informar (Ramos B/C)
+### 3. Report (Branches B/C)
 
-Apresentar ao utilizador, em poucas linhas: o **tipo de aplicação** e, do mapa de cobertura, as
-vertentes **com** testes (se houver) e as vertentes **sem** testes. Exemplos:
-- Ramo B: "App fullstack (React + Vite e FastAPI/REST). Sem testes em nenhuma vertente."
-- Ramo C: "App fullstack: o backend/API tem testes; o frontend não tem."
+Present to the user, in a few lines: the **application type** and, from the coverage map, the facets
+**with** tests (if any) and the facets **without** tests. Examples:
+- Branch B: "Fullstack app (React + Vite and FastAPI/REST). No tests in any facet."
+- Branch C: "Fullstack app: the backend/API has tests; the frontend does not."
 
-### 4. Perguntar se quer criar os testes em falta
+### 4. Ask whether to create the missing tests
 
-Usar `AskUserQuestion` (opção única **Sim / Não**) a perguntar se quer que sejam criados testes para as
-vertentes em falta.
+Use `AskUserQuestion` (single choice **Yes / No**) to ask whether tests should be created for the
+missing facets.
 
-Se **Não**:
-- Ramo C → executar os testes **existentes** e ir ao relatório (passo 8).
-- Ramo B → terminar com um resumo (tipo de app + ausência de testes + recomendação); não há nada para
-  correr.
+If **No**:
+- Branch C → run the **existing** tests and go to the report (step 8).
+- Branch B → finish with a summary (app type + absence of tests + recommendation); there is nothing to
+  run.
 
-Se **Sim** → continuar para o passo 5.
+If **Yes** → continue to step 5.
 
-### 5. Plano de testes
+### 5. Test plan
 
-Criar um plano **apenas para as vertentes sem testes** (ver `references/test-plan.md` para o que cobrir
-em cada uma). Para cada vertente, listar os alvos/fatias e o tipo de teste (unitário, integração,
-componente, e2e, contrato). Registar como tarefas com `TaskCreate`. Apresentar o plano e pedir
-aprovação **antes** de escrever qualquer teste.
+Create a plan **only for the facets without tests** (see `references/test-plan.md` for what to cover in
+each). For each facet, list the targets/slices and the test type (unit, integration, component, e2e,
+contract). Record them as tasks with `TaskCreate`. Present the plan and ask for approval **before**
+writing any test.
 
-### 6. Criar os testes
+### 6. Create the tests
 
-Implementar os testes do plano aprovado. Reutilizar o framework de teste já presente no projeto (no
-Ramo C há quase sempre um); se faltar, instalar o idiomático para o stack (ver
-`references/detect-and-run.md`) e configurá-lo. Escrever testes reais (ver a regra acima) e manter a
-suíte a compilar.
+Implement the approved plan's tests. Reuse the test framework already present in the project (in
+Branch C there is almost always one); if missing, install the idiomatic one for the stack (see
+`references/detect-and-run.md`) and configure it. Write real tests (see the rule above) and keep the
+suite compiling.
 
-### 7. Pedir autorização para executar
+### 7. Ask for authorization to run
 
-Usar `AskUserQuestion` (opção única **Sim / Não**) a perguntar se pode executar agora os testes.
+Use `AskUserQuestion` (single choice **Yes / No**) to ask whether it may run the tests now.
 
-Se **Não**: terminar, indicando o(s) comando(s) para o utilizador correr os testes manualmente.
-Se **Sim**: seguir para o passo 8.
+If **No**: finish, stating the command(s) for the user to run the tests manually.
+If **Yes**: proceed to step 8.
 
-### 8. Relatório
+### 8. Report
 
-Executar **todos** os testes e apresentar um relatório:
-- Ramo A → a suíte existente.
-- Ramos B/C → **existentes + acabados de criar** (no Ramo C, os dois conjuntos juntos).
+Run **all** tests and present a report:
+- Branch A → the existing suite.
+- Branches B/C → **existing + just created** (in Branch C, both sets together).
 
 ```
-# Relatório de testes
-Comando(s): <comando(s) executado(s)>
-Total: X · Passou: Y · Falhou: Z · Ignorado: W · Duração: <t>
-Cobertura: <%, se disponível>
+# Test report
+Command(s): <command(s) run>
+Total: X · Passed: Y · Failed: Z · Skipped: W · Duration: <t>
+Coverage: <%, if available>
 
-## Falhas
-- <teste> — <motivo resumido>
+## Failures
+- <test> — <short reason>
 
-## Conclusão
-<verde/vermelho + próximos passos sugeridos>
+## Conclusion
+<green/red + suggested next steps>
 ```
 
-Quando os testes acabados de criar falham, distinguir no relatório se a falha é do teste ou um bug real
-da aplicação.
+When the just-created tests fail, distinguish in the report whether the failure is the test's or a real
+application bug.
 
-## Referências
+## References
 
-- **`references/app-analysis.md`** — como classificar o tipo de aplicação e as vertentes (sinais a
-  procurar por ecossistema). Ler no passo 1.
-- **`references/detect-and-run.md`** — deteção de frameworks/scripts/ficheiros de teste e os comandos
-  para correr por ecossistema; interpretação de resultados. Ler nos passos 1, 2, 6 e 8.
-- **`references/test-plan.md`** — o que testar em cada vertente da aplicação e como estruturar o plano.
-  Ler nos passos 5 e 6.
+- **`references/app-analysis.md`** — how to classify the application type and facets (signals to look
+  for per ecosystem). Read in step 1.
+- **`references/detect-and-run.md`** — detection of test frameworks/scripts/files and the commands to
+  run per ecosystem; interpreting results. Read in steps 1, 2, 6 and 8.
+- **`references/test-plan.md`** — what to test in each facet of the application and how to structure
+  the plan. Read in steps 5 and 6.

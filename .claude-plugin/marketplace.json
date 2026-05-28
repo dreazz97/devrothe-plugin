@@ -4,12 +4,12 @@
     "name": "Iuri Peniche",
     "email": "iuri@pgtecmed.com"
   },
-  "description": "Marketplace de skills de apoio ao desenvolvimento.",
+  "description": "Marketplace of development-support skills.",
   "plugins": [
     {
       "name": "devrothe",
       "source": "./devrothe",
-      "description": "Skills de apoio ao desenvolvimento: create-application (arranque, planeamento e implementação com testes reais), test-application (validar/criar/correr testes) e refactor-application (reestruturar uma app existente para o stack e práticas-alvo)."
+      "description": "Development-support skills: create-application (bootstrap, planning and implementation with real tests), test-application (validate/create/run tests) and refactor-application (restructure an existing app to the target stack and practices)."
     }
   ]
 }

@@ -1,38 +1,37 @@
-# Stack React + Vite + backend (web applications)
+# React + Vite + backend stack (web applications)
 
-Stack-base para SPAs interativas (dashboards, SaaS, ferramentas internas) com um backend próprio
-desacoplado.
+Base stack for interactive SPAs (dashboards, SaaS, internal tools) with their own decoupled backend.
 
 ## Contents
-- Escolher o backend
+- Choosing the backend
 - Frontend (React + Vite)
-- Backend Node (Express)
-- Backend Python (FastAPI)
-- Base de dados
-- Verificação
+- Node backend (Express)
+- Python backend (FastAPI)
+- Database
+- Verification
 
-## Escolher o backend
+## Choosing the backend
 
-Decidir entre **Express/Node** e **FastAPI/Python**:
+Decide between **Express/Node** and **FastAPI/Python**:
 
-- **Express/Node** — defeito quando a equipa/projeto é maioritariamente TypeScript, quando se quer
-  partilhar tipos e validação (Zod) entre cliente e servidor, ou quando o domínio é I/O-bound (APIs,
-  tempo real, integrações web).
-- **FastAPI/Python** — quando o projeto envolve dados/ML, processamento numérico, bibliotecas
-  científicas, ou quando a equipa já trabalha em Python. OpenAPI/Swagger automático e validação com
-  Pydantic são vantagens.
+- **Express/Node** — default when the team/project is mostly TypeScript, when you want to share types
+  and validation (Zod) between client and server, or when the domain is I/O-bound (APIs, real-time,
+  web integrations).
+- **FastAPI/Python** — when the project involves data/ML, numerical processing, scientific libraries,
+  or when the team already works in Python. Automatic OpenAPI/Swagger and Pydantic validation are
+  advantages.
 
-Se o utilizador não tiver preferência, recomendar Express/Node para manter um só linguagem (TypeScript
-ponta a ponta) salvo se houver um requisito de dados/ML claro.
+If the user has no preference, recommend Express/Node to keep a single language (TypeScript end to
+end) unless there is a clear data/ML requirement.
 
 ## Frontend (React + Vite)
 
 ```bash
-pnpm create vite@latest <nome> -- --template react-ts
-cd <nome> && pnpm install
+pnpm create vite@latest <name> -- --template react-ts
+cd <name> && pnpm install
 ```
 
-UI e dependências (mesmo stack visual do `web-stack.md`):
+UI and dependencies (same visual stack as `web-stack.md`):
 
 ```bash
 pnpm add lucide-react framer-motion next-themes sonner
@@ -43,47 +42,47 @@ pnpm add -D prettier prettier-plugin-tailwindcss
 pnpm add -D vitest @testing-library/react @testing-library/jest-dom jsdom
 ```
 
-- Configurar Tailwind v4 e inicializar o shadcn/ui: `pnpm dlx shadcn@latest init`.
-- `next-themes` funciona em apps React puras (sem Next): usar para alternância de tema com classe no
+- Configure Tailwind v4 and initialize shadcn/ui: `pnpm dlx shadcn@latest init`.
+- `next-themes` works in plain React apps (no Next): use it for theme switching with a class on
   `<html>`.
-- Montar `<QueryClientProvider>` (TanStack Query) e `<Toaster />` (sonner) na raiz da app.
-- Definir a base URL da API por variável de ambiente (`VITE_API_URL`).
+- Mount `<QueryClientProvider>` (TanStack Query) and `<Toaster />` (sonner) at the app root.
+- Set the API base URL via an environment variable (`VITE_API_URL`).
 
-Estrutura robusta e feature-first (criar as pastas no scaffold, `.gitkeep` nas vazias):
+Robust, feature-first structure (create the folders during scaffold, `.gitkeep` in the empty ones):
 
 ```
 .
 ├── src/
 │   ├── app/                  # bootstrap: providers (query, theme, toaster), router, App.tsx
-│   ├── routes/               # definição de rotas (react-router) ou pages/
+│   ├── routes/               # route definitions (react-router) or pages/
 │   ├── components/
-│   │   ├── ui/               # primitivos shadcn/ui (gerado)
-│   │   └── shared/           # layout, navegação, componentes de alto nível
-│   ├── features/             # um diretório por domínio/feature
+│   │   ├── ui/               # shadcn/ui primitives (generated)
+│   │   └── shared/           # layout, navigation, high-level components
+│   ├── features/             # one directory per domain/feature
 │   │   └── <feature>/
-│   │       ├── api/          # chamadas HTTP + hooks de query/mutation (TanStack Query)
+│   │       ├── api/          # HTTP calls + query/mutation hooks (TanStack Query)
 │   │       ├── components/
 │   │       ├── hooks/
 │   │       ├── schemas.ts    # Zod
 │   │       ├── types.ts
-│   │       └── index.ts      # API pública da feature
+│   │       └── index.ts      # the feature's public API
 │   ├── lib/                  # http client, queryClient, utils, env
-│   ├── hooks/                # hooks globais
-│   ├── config/               # constantes, config de runtime
-│   ├── types/                # tipos globais
+│   ├── hooks/                # global hooks
+│   ├── config/               # constants, runtime config
+│   ├── types/                # global types
 │   ├── assets/
 │   └── styles/
 └── tests/
-    ├── unit/                 # Vitest + Testing Library (lógica e componentes)
-    └── e2e/                  # Playwright (fluxos críticos)
+    ├── unit/                 # Vitest + Testing Library (logic and components)
+    └── e2e/                  # Playwright (critical flows)
 ```
 
-- Importar apenas o `index.ts` de cada feature a partir de fora; não alcançar internals de outra
-  feature. O que for partilhado sobe para `lib/`, `components/shared/` ou `hooks/`.
-- Testes de componente podem ficar colocados (`*.test.tsx` junto ao componente) ou em `tests/unit/`;
-  ver `testing.md` para a convenção e o que cobrir.
+- From the outside, import only each feature's `index.ts`; do not reach into another feature's
+  internals. Anything shared moves up to `lib/`, `components/shared/` or `hooks/`.
+- Component tests can be colocated (`*.test.tsx` next to the component) or in `tests/unit/`; see
+  `testing.md` for the convention and what to cover.
 
-## Backend Node (Express)
+## Node backend (Express)
 
 ```bash
 pnpm add express cors helmet
@@ -93,42 +92,42 @@ pnpm add -D typescript tsx @types/express @types/cors prisma
 pnpm add -D vitest supertest @types/supertest
 ```
 
-- TypeScript com `tsx` para dev (`tsx watch src/server.ts`).
-- Validar input nas fronteiras com Zod; partilhar schemas com o frontend quando possível.
-- `helmet` + `cors` configurado para a origem do frontend.
+- TypeScript with `tsx` for dev (`tsx watch src/server.ts`).
+- Validate input at the boundaries with Zod; share schemas with the frontend when possible.
+- `helmet` + `cors` configured for the frontend's origin.
 
-Estrutura robusta, feature-first com camadas por módulo (criar as pastas no scaffold):
+Robust, feature-first structure with per-module layers (create the folders during scaffold):
 
 ```
 .
 ├── src/
-│   ├── app.ts                    # cria a app Express (middleware, rotas) — sem listen
+│   ├── app.ts                    # creates the Express app (middleware, routes) — no listen
 │   ├── server.ts                 # bootstrap: listen, graceful shutdown
-│   ├── config/                   # env (validado com Zod), constantes
-│   ├── modules/                  # um diretório por domínio
+│   ├── config/                   # env (validated with Zod), constants
+│   ├── modules/                  # one directory per domain
 │   │   └── <module>/
 │   │       ├── <module>.routes.ts
 │   │       ├── <module>.controller.ts   # HTTP in/out
-│   │       ├── <module>.service.ts      # regras de negócio
-│   │       ├── <module>.repository.ts   # acesso a dados (Prisma)
-│   │       ├── <module>.schema.ts       # Zod (validação de request)
+│   │       ├── <module>.service.ts      # business rules
+│   │       ├── <module>.repository.ts   # data access (Prisma)
+│   │       ├── <module>.schema.ts       # Zod (request validation)
 │   │       └── <module>.types.ts
-│   ├── middleware/               # error handler, auth, validação, rate-limit
+│   ├── middleware/               # error handler, auth, validation, rate-limit
 │   ├── lib/                      # prisma client, logger, helpers
 │   └── utils/
 ├── prisma/
 │   ├── schema.prisma
 │   └── migrations/
 └── tests/
-    ├── unit/                     # Vitest (services, utils — sem I/O)
-    └── integration/              # supertest sobre app.ts (rotas + BD de teste)
+    ├── unit/                     # Vitest (services, utils — no I/O)
+    └── integration/              # supertest against app.ts (routes + test DB)
 ```
 
-- Fluxo de uma rota: `routes → controller → service → repository`. O controller não fala com o Prisma
-  diretamente; a regra de negócio vive no service. Porquê: testabilidade e fronteiras claras.
-- Ver `testing.md` para o que cobrir em cada camada e o gate de testes verde.
+- Route flow: `routes → controller → service → repository`. The controller does not talk to Prisma
+  directly; business rules live in the service. Why: testability and clear boundaries.
+- See `testing.md` for what to cover at each layer and the green test gate.
 
-## Backend Python (FastAPI)
+## Python backend (FastAPI)
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
@@ -137,55 +136,55 @@ pip install sqlalchemy alembic psycopg[binary]
 pip install -U pytest httpx
 ```
 
-- Validação e settings com Pydantic; OpenAPI/Swagger automático em `/docs`.
-- ORM: **SQLAlchemy + Alembic** (Prisma não é idiomático em Python). Inicializar migrations com
+- Validation and settings with Pydantic; automatic OpenAPI/Swagger at `/docs`.
+- ORM: **SQLAlchemy + Alembic** (Prisma is not idiomatic in Python). Initialize migrations with
   `alembic init alembic`.
-- Servir em dev: `uvicorn app.main:app --reload`.
-- Gerir dependências num `requirements.txt` ou `pyproject.toml`.
+- Serve in dev: `uvicorn app.main:app --reload`.
+- Manage dependencies in a `requirements.txt` or `pyproject.toml`.
 
-Estrutura robusta, feature-first com camadas por módulo (criar as pastas no scaffold):
+Robust, feature-first structure with per-module layers (create the folders during scaffold):
 
 ```
 .
 ├── app/
-│   ├── main.py                   # cria a app FastAPI, regista routers e middleware
+│   ├── main.py                   # creates the FastAPI app, registers routers and middleware
 │   ├── core/                     # config (Pydantic settings), security, logging
 │   │   ├── config.py
 │   │   └── security.py
 │   ├── api/
-│   │   ├── deps.py               # dependências partilhadas (auth, sessão DB)
-│   │   └── v1/                   # versão da API; agrega os routers dos módulos
-│   ├── modules/                  # um diretório por domínio
+│   │   ├── deps.py               # shared dependencies (auth, DB session)
+│   │   └── v1/                   # API version; aggregates the modules' routers
+│   ├── modules/                  # one directory per domain
 │   │   └── <module>/
 │   │       ├── router.py         # endpoints (HTTP in/out)
-│   │       ├── service.py        # regras de negócio
-│   │       ├── repository.py     # acesso a dados (SQLAlchemy)
-│   │       ├── models.py         # modelos SQLAlchemy
-│   │       └── schemas.py        # schemas Pydantic (request/response)
+│   │       ├── service.py        # business rules
+│   │       ├── repository.py     # data access (SQLAlchemy)
+│   │       ├── models.py         # SQLAlchemy models
+│   │       └── schemas.py        # Pydantic schemas (request/response)
 │   └── db/
-│       ├── base.py               # Declarative Base + import dos models
+│       ├── base.py               # Declarative Base + model imports
 │       └── session.py            # engine + SessionLocal
 ├── alembic/                      # migrations
 ├── alembic.ini
 └── tests/
-    ├── unit/                     # pytest (services, lógica de domínio)
-    └── integration/              # httpx (TestClient/AsyncClient) sobre a app + BD de teste
+    ├── unit/                     # pytest (services, domain logic)
+    └── integration/              # httpx (TestClient/AsyncClient) against the app + test DB
 ```
 
-- Fluxo de um endpoint: `router → service → repository`. O router não toca na sessão SQLAlchemy
-  diretamente; injeta dependências via `api/deps.py` e delega a regra de negócio ao service.
-- Ver `testing.md` para o que cobrir em cada camada e o gate de testes verde.
+- Endpoint flow: `router → service → repository`. The router does not touch the SQLAlchemy session
+  directly; it injects dependencies via `api/deps.py` and delegates business rules to the service.
+- See `testing.md` for what to cover at each layer and the green test gate.
 
-## Base de dados
+## Database
 
-PostgreSQL (default). Subir via Docker Compose (ver `modules.md` ou criar um compose mínimo com
-`postgres:16`). ORM conforme o backend:
+PostgreSQL (default). Bring it up via Docker Compose (see `modules.md` or create a minimal compose
+with `postgres:16`). ORM depending on the backend:
 - Node → **Prisma** (`pnpm dlx prisma init --datasource-provider postgresql`).
 - Python → **SQLAlchemy + Alembic**.
 
-## Verificação
+## Verification
 
 - Frontend: `pnpm install && pnpm lint && pnpm build`.
-- Backend Node: `pnpm install && pnpm test && pnpm dev`.
-- Backend Python: `pytest && uvicorn app.main:app --reload`.
-- Confirmar que o frontend comunica com o backend (CORS e base URL corretos).
+- Node backend: `pnpm install && pnpm test && pnpm dev`.
+- Python backend: `pytest && uvicorn app.main:app --reload`.
+- Confirm the frontend talks to the backend (correct CORS and base URL).

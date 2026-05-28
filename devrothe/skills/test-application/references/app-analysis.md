@@ -1,20 +1,19 @@
-# Análise do tipo de aplicação
+# Application type analysis
 
-Classificar a aplicação a partir do que está no projeto. Uma app pode ter **várias vertentes** (ex.:
-fullstack = frontend + backend). Registar todas as que se aplicam — o plano de testes (test-plan.md)
-depende disto.
+Classify the application from what is in the project. An app can have **multiple facets** (e.g.,
+fullstack = frontend + backend). Record all that apply — the test plan (test-plan.md) depends on this.
 
 ## Contents
-- Identificar o ecossistema
-- Sinais por vertente
-- Como reportar a classificação
+- Identify the ecosystem
+- Signals per facet
+- How to report the classification
 
-## Identificar o ecossistema
+## Identify the ecosystem
 
-Procurar manifestos para saber linguagem(ns) e gestor de dependências:
+Look for manifests to find the language(s) and dependency manager:
 
-| Ficheiro | Ecossistema |
-|----------|-------------|
+| File | Ecosystem |
+|------|-----------|
 | `package.json` | Node/JS/TS |
 | `pyproject.toml`, `requirements.txt`, `setup.py` | Python |
 | `go.mod` | Go |
@@ -24,36 +23,35 @@ Procurar manifestos para saber linguagem(ns) e gestor de dependências:
 | `*.csproj`, `*.sln` | .NET |
 | `Gemfile` | Ruby |
 
-Num monorepo, podem coexistir vários — analisar cada pacote/serviço.
+In a monorepo, several may coexist — analyze each package/service.
 
-## Sinais por vertente
+## Signals per facet
 
-- **Frontend / UI** — dependências `react`/`vue`/`@angular/core`/`svelte`/`next`/`vite`/`astro`;
-  ficheiros `.tsx`/`.jsx`/`.vue`/`.svelte`, `index.html`, `public/`, componentes, CSS/Tailwind,
-  design system. Indica testes de componente e e2e de UI.
-- **Backend / API** — frameworks web (`express`/`fastify`/`@nestjs`/`koa`, `fastapi`/`flask`/`django`,
-  `spring-boot`, `gin`/`echo`/`fiber`, `actix`/`axum`); handlers/controllers, bootstrap de servidor
-  HTTP, rotas, especificação OpenAPI/Swagger. Indica testes de integração de endpoints + unitários de
-  serviços.
-- **Microserviço** — responsabilidade única e pequena, deployável de forma independente; sinais:
-  `Dockerfile` + manifestos Kubernetes/Helm, clientes de message broker (`kafka`/`rabbitmq`/`nats`),
-  ficheiros `.proto`/gRPC, health/readiness endpoints, contratos com outros serviços. Indica testes de
-  contrato, de handlers de mensagens e de integração (testcontainers).
-- **Serviço / monólito** — backend maior com múltiplos domínios no mesmo deployável. Mesmos testes do
-  backend, mais ênfase em fronteiras entre módulos.
-- **CLI / biblioteca** — entry `bin`/`console_scripts`, sem servidor, pacote publicável, API exportada.
-  Indica testes unitários da API pública e testes de invocação da CLI.
-- **Fullstack** — frontend + backend no mesmo repositório. Tratar como duas vertentes.
-- **Mobile** — `react-native`/`expo`, Flutter (`pubspec.yaml`). Testes de componente/widget + e2e
+- **Frontend / UI** — dependencies `react`/`vue`/`@angular/core`/`svelte`/`next`/`vite`/`astro`;
+  `.tsx`/`.jsx`/`.vue`/`.svelte` files, `index.html`, `public/`, components, CSS/Tailwind, design
+  system. Indicates component tests and UI e2e.
+- **Backend / API** — web frameworks (`express`/`fastify`/`@nestjs`/`koa`, `fastapi`/`flask`/`django`,
+  `spring-boot`, `gin`/`echo`/`fiber`, `actix`/`axum`); handlers/controllers, HTTP server bootstrap,
+  routes, OpenAPI/Swagger spec. Indicates endpoint integration tests + service unit tests.
+- **Microservice** — single, small responsibility, independently deployable; signals: `Dockerfile` +
+  Kubernetes/Helm manifests, message broker clients (`kafka`/`rabbitmq`/`nats`), `.proto`/gRPC files,
+  health/readiness endpoints, contracts with other services. Indicates contract tests, message-handler
+  tests and integration (testcontainers).
+- **Service / monolith** — a larger backend with multiple domains in the same deployable. Same tests as
+  the backend, with more emphasis on boundaries between modules.
+- **CLI / library** — `bin`/`console_scripts` entry, no server, publishable package, exported API.
+  Indicates unit tests of the public API and CLI invocation tests.
+- **Fullstack** — frontend + backend in the same repository. Treat as two facets.
+- **Mobile** — `react-native`/`expo`, Flutter (`pubspec.yaml`). Component/widget tests + e2e
   (Detox/Maestro).
-- **Dados / ML** — notebooks, `pandas`/`numpy`/`scikit-learn`/`torch`, scripts de treino/ETL. Testes de
-  transformações de dados e de funções puras; validar shapes/contratos de dados.
+- **Data / ML** — notebooks, `pandas`/`numpy`/`scikit-learn`/`torch`, training/ETL scripts. Tests for
+  data transformations and pure functions; validate data shapes/contracts.
 
-Sinais auxiliares: `docker-compose.yml` (vários serviços → provável microserviços/fullstack),
-`infra/`/`k8s/`/`helm/`, pipelines CI, `Makefile`.
+Auxiliary signals: `docker-compose.yml` (several services → likely microservices/fullstack),
+`infra/`/`k8s/`/`helm/`, CI pipelines, `Makefile`.
 
-## Como reportar a classificação
+## How to report the classification
 
-Resumir ao utilizador em poucas linhas: linguagem(ns), tipo de aplicação e a lista de vertentes
-detetadas, seguido da constatação de que não existem testes. Exemplo:
-"App fullstack (frontend React + Vite e backend FastAPI/REST). Sem testes no projeto."
+Summarize to the user in a few lines: language(s), application type and the list of detected facets,
+followed by the observation that no tests exist. Example:
+"Fullstack app (React + Vite frontend and FastAPI/REST backend). No tests in the project."
