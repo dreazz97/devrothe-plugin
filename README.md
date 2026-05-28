@@ -149,6 +149,10 @@ defined in each stack's reference files. Tests are not just scaffolding: the imp
 > commands; and every implemented feature ships with real tests, with the green suite as a completion
 > gate.
 
+> **Manual testing:** when reporting test results, the AI always tells you which checks are still
+> recommended to do by hand — especially UI/UX interaction in a real browser — since graphical aspects
+> are hard to verify reliably with AI.
+
 ---
 
 ## Skill: `test-application`
@@ -175,7 +179,8 @@ creates real tests per facet, runs them (with authorization) and presents a repo
      authorization) **only the missing ones**; then runs **all tests — existing + just created** — and
      reports.
 3. **Final report** with totals, failures and coverage. Created tests are real (they exercise behavior)
-   — no placeholders or empty snapshots.
+   — no placeholders or empty snapshots. The report also recommends **manual checks** (UI/UX in a real
+   browser), since graphical aspects are hard to verify reliably with AI.
 
 ---
 
@@ -203,7 +208,8 @@ of `test-application`.
 4. **Safety net** — branch/commit (or backup) before touching anything.
 5. **Execution** incrementally, preserving behavior and validating at each phase; README kept in sync.
 6. **Validation** — runs the existing tests and creates the missing ones; green suite + lint + build +
-   startup, and a final report (before → after, bugs resolved, test results).
+   startup, and a final report (before → after, bugs resolved, test results). The report also flags
+   **manual checks** (UI/UX in a real browser), since graphical aspects are hard to verify with AI.
 
 > Restructures without changing functionality — the only allowed behavior change is fixing the bugs
 > listed in the plan.

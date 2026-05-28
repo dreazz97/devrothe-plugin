@@ -120,12 +120,21 @@ Coverage: <%, if available>
 ## Failures
 - <test> — <short reason>
 
+## Recommended manual testing
+- <concrete checks the user should do by hand, e.g. browser UI/UX>
+
 ## Conclusion
 <green/red + suggested next steps>
 ```
 
 When the just-created tests fail, distinguish in the report whether the failure is the test's or a real
 application bug.
+
+**Manual testing disclaimer (always include).** The report must tell the user that some checks are
+still recommended to be run manually — especially **UI/UX interaction in a real browser** (visual
+layout, responsiveness, animations, accessibility, real flows) — because graphical aspects are hard to
+verify reliably with AI. A green suite confirms logic, not look and feel. Fill the "Recommended manual
+testing" section with concrete checks for the facets at hand.
 
 ## References
 

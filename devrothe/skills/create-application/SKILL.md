@@ -149,6 +149,12 @@ passes, the app starts, **and the full test suite is green**. Run the tests as t
 fails (or is improperly skipped/xfail), fix it before calling it done. Also confirm the README
 reflects the real state.
 
+**Manual testing disclaimer (always tell the user).** A green suite is not the whole picture: some
+checks are still recommended to be done manually — especially **UI/UX interaction in a real browser**
+(visual layout, responsiveness, animations, accessibility, real flows), since graphical aspects are
+hard to verify reliably with AI. List the concrete manual checks worth doing (see
+`references/testing.md`).
+
 ## Cross-cutting defaults (always, without asking)
 
 - **TypeScript** in all JS code.

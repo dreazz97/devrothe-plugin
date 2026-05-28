@@ -92,6 +92,12 @@ Confirm everything works: run the existing tests and **create the missing ones**
 facets (align with `../create-application/references/testing.md`); the suite must end **green**, plus
 lint, build and startup. Finish with a report of what changed, the bugs fixed and the test results.
 
+**Manual testing disclaimer (always tell the user).** Include in the report that some checks are still
+recommended to be done manually — especially **UI/UX interaction in a real browser** (visual layout,
+responsiveness, animations, accessibility, real flows) — since graphical aspects are hard to verify
+reliably with AI, and a refactor can shift visual behavior even when the suite stays green. List the
+concrete manual checks for the areas touched (see `../create-application/references/testing.md`).
+
 ## References
 
 - **`references/assessment.md`** — how to analyze the project: app type, deviation map against the

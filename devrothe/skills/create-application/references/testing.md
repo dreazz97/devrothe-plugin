@@ -11,6 +11,7 @@ without exercising the real logic.
 - Tools per stack
 - Implementation loop
 - Completion gate
+- Manual testing disclaimer
 
 ## What to test per layer
 
@@ -56,3 +57,13 @@ passes. Only then move to the next slice. Keep the suite compiling at all times.
 A feature's implementation is only done when its tests pass. The overall task is only done when the
 **full suite is green**, plus lint and build. Never mark as done with failing tests, nor disable them
 with `skip`/`xfail`/`.only` without explicit justification to the user.
+
+## Manual testing disclaimer
+
+Automated tests do not cover everything. **Always tell the user, when reporting test results, that
+some checks are still recommended to be run manually** — especially **UI/UX interaction in a real
+browser**: visual layout, spacing and theming, responsiveness across breakpoints, animations,
+accessibility and real end-to-end user flows. Graphical and experiential aspects are hard to verify
+reliably with AI, so a green suite is a floor (logic works), not proof that the app looks and feels
+right. List the concrete manual checks worth doing for what was built (e.g., "open the checkout page
+in a browser and confirm the layout and the success toast").
