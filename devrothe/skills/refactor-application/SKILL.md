@@ -1,12 +1,12 @@
 ---
-name: fix-application
-description: Analisa uma aplicação existente e reestrutura-a para seguir o stack tecnológico, os fundamentos e a organização da skill start-development. Pensada para projetos feitos por pessoas sem experiência: identifica o tipo de app e as vertentes, mapeia os desvios à metodologia-alvo, deteta bugs/erros e cria um plano de reestruturação faseado (incluindo as correções de bugs). Depois de aprovado pelo utilizador, executa o plano de forma incremental e preservando o comportamento, e no fim valida com testes (corre os existentes e cria os que faltarem) mais lint/build/arranque. Usar quando o utilizador quer alinhar/normalizar um projeto existente com as práticas da start-development, refatorar a organização/stack, ou "arranjar" uma app mal estruturada. Dispara em "fix-application", "reestrutura a app", "alinha com a start-development", "normaliza o projeto", "refatora a organização", "arranja esta aplicação".
+name: refactor-application
+description: Analisa uma aplicação existente e reestrutura-a para seguir o stack tecnológico, os fundamentos e a organização da skill create-application. Pensada para projetos feitos por pessoas sem experiência: identifica o tipo de app e as vertentes, mapeia os desvios à metodologia-alvo, deteta bugs/erros e cria um plano de reestruturação faseado (incluindo as correções de bugs). Depois de aprovado pelo utilizador, executa o plano de forma incremental e preservando o comportamento, e no fim valida com testes (corre os existentes e cria os que faltarem) mais lint/build/arranque. Usar quando o utilizador quer alinhar/normalizar um projeto existente com as práticas da create-application, refatorar a organização/stack, ou "arranjar" uma app mal estruturada. Dispara em "refactor-application", "refatora a aplicação", "reestrutura a app", "alinha com a create-application", "normaliza o projeto", "refatora a organização", "arranja esta aplicação".
 ---
 
-# fix-application
+# refactor-application
 
 Pegar numa aplicação existente — tipicamente feita por alguém sem experiência — e reestruturá-la para
-os fundamentos, o stack e a organização da skill `start-development`, corrigindo pelo caminho os
+os fundamentos, o stack e a organização da skill `create-application`, corrigindo pelo caminho os
 bugs/erros que já lá estavam.
 
 **Regra: preservar o comportamento.** A reestruturação não altera funcionalidades — é equivalência
@@ -22,10 +22,10 @@ atrás.
 de cada uma; só passar à seguinte com a anterior verde. Porquê: erros apanham-se cedo e ficam isolados
 à fase que os introduziu.
 
-**Metodologia-alvo.** O destino é definido pela `start-development`. Consultar:
-`../start-development/references/web-stack.md` e `../start-development/references/app-stack.md` (stack e
-estrutura de pastas), `../start-development/references/modules.md` (auth, storage, etc.) e
-`../start-development/references/testing.md` (testes). Para classificar a app e detetar/correr testes,
+**Metodologia-alvo.** O destino é definido pela `create-application`. Consultar:
+`../create-application/references/web-stack.md` e `../create-application/references/app-stack.md` (stack e
+estrutura de pastas), `../create-application/references/modules.md` (auth, storage, etc.) e
+`../create-application/references/testing.md` (testes). Para classificar a app e detetar/correr testes,
 usar `../test-application/references/app-analysis.md` e `../test-application/references/detect-and-run.md`.
 
 ## Fluxo
@@ -88,7 +88,7 @@ preservar o comportamento, validar (lint/build/testes/arranque) e atualizar o `R
 ### 6. Validar
 
 Confirmar que tudo funciona: correr os testes existentes e **criar os que faltarem** para as vertentes
-afetadas (alinhar com `../start-development/references/testing.md`); a suíte tem de ficar **verde**,
+afetadas (alinhar com `../create-application/references/testing.md`); a suíte tem de ficar **verde**,
 além de lint, build e arranque. Terminar com um relatório do que mudou, dos bugs corrigidos e do
 resultado dos testes.
 

@@ -1,9 +1,9 @@
 ---
-name: start-development
-description: Arranca um projeto novo de ponta a ponta — entrevista o utilizador sobre requisitos, escolhe o stack tecnológico adequado, faz o scaffold, planeia as features e implementa o projeto a partir do plano com testes reais. Usar quando o utilizador quer começar um projeto novo, decidir tecnologias/stack, ou inicializar e arrancar uma base de código. Dispara em "start-development", "iniciar desenvolvimento", "novo projeto", "começar um projeto", "arranca um projeto", "que stack uso", "setup inicial", "scaffold". Decide entre stack Next.js (PoC, landing pages, e-commerce, sites institucionais) e stack React+Vite com backend Express/Node ou FastAPI/Python (web applications), com módulos condicionais para autenticação, armazenamento (MinIO), observabilidade (Kubernetes), logging, pagamentos (Stripe) e email (Resend).
+name: create-application
+description: Arranca um projeto novo de ponta a ponta — entrevista o utilizador sobre requisitos, escolhe o stack tecnológico adequado, faz o scaffold, planeia as features e implementa o projeto a partir do plano com testes reais. Usar quando o utilizador quer começar um projeto novo, decidir tecnologias/stack, ou inicializar e arrancar uma base de código. Dispara em "create-application", "iniciar desenvolvimento", "novo projeto", "começar um projeto", "arranca um projeto", "que stack uso", "setup inicial", "scaffold". Decide entre stack Next.js (PoC, landing pages, e-commerce, sites institucionais) e stack React+Vite com backend Express/Node ou FastAPI/Python (web applications), com módulos condicionais para autenticação, armazenamento (MinIO), observabilidade (Kubernetes), logging, pagamentos (Stripe) e email (Resend).
 ---
 
-# start-development
+# create-application
 
 Entrevistar o utilizador, resolver o stack, planear as features e implementar o projeto a partir do
 plano — com testes reais.

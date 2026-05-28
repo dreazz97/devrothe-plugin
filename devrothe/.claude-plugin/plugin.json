@@ -1,7 +1,7 @@
 {
   "name": "devrothe",
-  "version": "0.2.0",
-  "description": "Skills de apoio ao desenvolvimento: start-development (arranque, planeamento e implementação com testes reais), test-application (validar/criar/correr testes) e fix-application (reestruturar uma app existente para o stack e práticas-alvo).",
+  "version": "0.3.0",
+  "description": "Skills de apoio ao desenvolvimento: create-application (arranque, planeamento e implementação com testes reais), test-application (validar/criar/correr testes) e refactor-application (reestruturar uma app existente para o stack e práticas-alvo).",
   "author": {
     "name": "Iuri Peniche",
     "email": "iuri@pgtecmed.com"

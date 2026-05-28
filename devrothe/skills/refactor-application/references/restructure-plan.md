@@ -29,11 +29,11 @@ Sugestão (ajustar ao projeto e às vertentes detetadas):
 3. **Tooling base** — TypeScript, pnpm, ESLint + Prettier, scripts de `dev/build/lint/test`.
 4. **Alinhamento de stack/dependências** — UI (Tailwind + shadcn/ui + lucide-react, framer-motion,
    next-themes, sonner), Zod + React Hook Form, TanStack Query, ORM (Prisma/SQLAlchemy) sobre Postgres.
-5. **Estrutura de pastas** — migrar para feature-first robusta (ver `../start-development/references/`
+5. **Estrutura de pastas** — migrar para feature-first robusta (ver `../create-application/references/`
    `web-stack.md` ou `app-stack.md`), movendo o código por domínio.
 6. **Módulos** — alinhar auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging,
-   payments, email conforme aplicável (ver `../start-development/references/modules.md`).
-7. **Testes** — alinhar/adicionar a camada de testes (ver `../start-development/references/testing.md`).
+   payments, email conforme aplicável (ver `../create-application/references/modules.md`).
+7. **Testes** — alinhar/adicionar a camada de testes (ver `../create-application/references/testing.md`).
 8. **Restantes bugs/qualidade** — corrigir bugs não-bloqueantes e remover dead code/anti-padrões.
 9. **Docs** — atualizar o `README.md` para refletir o estado final.
 

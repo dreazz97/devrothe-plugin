@@ -40,7 +40,7 @@ que corra mal.
 
 Ao terminar as fases:
 - Correr a suíte de testes completa; **criar testes** para as vertentes afetadas que não os tinham
-  (alinhar com `../start-development/references/testing.md`). A suíte tem de ficar **verde**.
+  (alinhar com `../create-application/references/testing.md`). A suíte tem de ficar **verde**.
 - Confirmar lint, build e arranque sem erros.
 - Apresentar um relatório final: desvios corrigidos (antes → depois), bugs resolvidos, ficheiros
   reorganizados, e o resultado dos testes (totais, falhas, cobertura se disponível). Indicar o branch

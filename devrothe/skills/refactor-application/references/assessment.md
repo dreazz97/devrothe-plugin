@@ -18,7 +18,7 @@ Objetivo: perceber o estado atual sem o alterar e produzir três saídas — tip
 
 ## Mapa de desvios à metodologia-alvo
 
-Comparar o projeto com o destino da `start-development`. Para cada item, marcar **OK / desvio**:
+Comparar o projeto com o destino da `create-application`. Para cada item, marcar **OK / desvio**:
 
 | Dimensão | Alvo |
 |----------|------|
@@ -35,7 +35,7 @@ Comparar o projeto com o destino da `start-development`. Para cada item, marcar 
 | Infra de dev | Docker Compose (Postgres, e MinIO/Keycloak se aplicável) |
 | Módulos | auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments, email |
 
-Detalhes do alvo em `../start-development/references/web-stack.md`, `app-stack.md`, `modules.md` e
+Detalhes do alvo em `../create-application/references/web-stack.md`, `app-stack.md`, `modules.md` e
 `testing.md`.
 
 ## Deteção de bugs/erros

@@ -3,8 +3,8 @@
 Plugin de **skills de apoio ao desenvolvimento** para o [Claude Code](https://code.claude.com).
 Distribuído como marketplace a partir do GitHub (`dreazz97/devrothe-plugin`).
 
-Estado atual: 3 skills — [`start-development`](#skill-start-development),
-[`test-application`](#skill-test-application) e [`fix-application`](#skill-fix-application).
+Estado atual: 3 skills — [`create-application`](#skill-create-application),
+[`test-application`](#skill-test-application) e [`refactor-application`](#skill-refactor-application).
 
 ---
 
@@ -16,7 +16,7 @@ Devrothe Plugin/
 └── devrothe/                           # plugin
     ├── .claude-plugin/plugin.json
     └── skills/
-        ├── start-development/
+        ├── create-application/
         │   ├── SKILL.md                # entrevista + plano + scaffold + implementação
         │   └── references/
         │       ├── web-stack.md        # stack Next.js
@@ -29,7 +29,7 @@ Devrothe Plugin/
         │       ├── app-analysis.md     # classificar o tipo de aplicação
         │       ├── detect-and-run.md   # detetar e executar testes por ecossistema
         │       └── test-plan.md        # o que testar por vertente
-        └── fix-application/
+        └── refactor-application/
             ├── SKILL.md                # analisar + plano de reestruturação + executar + validar
             └── references/
                 ├── assessment.md       # análise: tipo de app, desvios e bugs
@@ -72,15 +72,15 @@ Para iterar sobre o plugin sem passar pelo GitHub, adiciona o marketplace por ca
 
 | Comando | O que faz |
 |---------|-----------|
-| `/start-development` | Entrevista, escolhe o stack, planeia, faz o scaffold e implementa o projeto com testes reais. |
+| `/create-application` | Entrevista, escolhe o stack, planeia, faz o scaffold e implementa o projeto com testes reais. |
 | `/test-application` | Deteta e corre os testes da app e reporta; se não houver, analisa a app, cria testes por vertente e reporta. |
-| `/fix-application` | Analisa uma app existente, planeia a reestruturação para o stack/práticas da `start-development`, executa (com aprovação) e valida com testes. |
+| `/refactor-application` | Analisa uma app existente, planeia a reestruturação para o stack/práticas da `create-application`, executa (com aprovação) e valida com testes. |
 
 As skills também disparam por linguagem natural (ver gatilhos abaixo) — não é obrigatório usar o comando com barra.
 
 ---
 
-## Skill: `start-development`
+## Skill: `create-application`
 
 Arranca um projeto novo de ponta a ponta: faz perguntas, resolve o stack, planeia as features,
 confirma contigo e depois **inicializa e implementa o projeto a partir do plano — com testes reais**.
@@ -89,7 +89,7 @@ testes verde.
 
 ### Como invocar
 
-- Comando: `/start-development`
+- Comando: `/create-application`
 - Frases-gatilho: *"novo projeto"*, *"iniciar desenvolvimento"*, *"começar um projeto"*,
   *"que stack uso"*, *"setup inicial"*, *"scaffold"*.
 
@@ -133,7 +133,7 @@ TypeScript · pnpm · ESLint + Prettier · Docker Compose para dev · Vitest + P
 Cada solução é gerada com uma **estrutura de pastas robusta e feature-first** (organização por
 domínio, separação de camadas UI/servidor/dados e localizações previsíveis para schemas, tipos,
 config e testes), definida nos ficheiros de referência de cada stack. Os testes não são só andaime: a
-implementação escreve **testes reais** por feature (ver `devrothe/skills/start-development/references/testing.md`).
+implementação escreve **testes reais** por feature (ver `devrothe/skills/create-application/references/testing.md`).
 
 ### Workflow
 
@@ -176,17 +176,17 @@ testes reais por vertente, executa-os (com autorização) e apresenta um relató
 
 ---
 
-## Skill: `fix-application`
+## Skill: `refactor-application`
 
 Pega numa aplicação existente — tipicamente feita por alguém sem experiência — e reestrutura-a para os
-fundamentos, o stack e a organização da `start-development`, corrigindo pelo caminho os bugs/erros que
-já lá estavam. Reutiliza a metodologia-alvo da `start-development` e a análise/testes da
+fundamentos, o stack e a organização da `create-application`, corrigindo pelo caminho os bugs/erros que
+já lá estavam. Reutiliza a metodologia-alvo da `create-application` e a análise/testes da
 `test-application`.
 
 ### Como invocar
 
-- Comando: `/fix-application`
-- Frases-gatilho: *"reestrutura a app"*, *"alinha com a start-development"*, *"normaliza o projeto"*,
+- Comando: `/refactor-application`
+- Frases-gatilho: *"reestrutura a app"*, *"alinha com a create-application"*, *"normaliza o projeto"*,
   *"refatora a organização"*, *"arranja esta aplicação"*.
 
 ### Fluxo
