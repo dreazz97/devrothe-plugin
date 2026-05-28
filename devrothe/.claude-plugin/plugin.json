@@ -1,7 +1,7 @@
 {
   "name": "devrothe",
-  "version": "0.1.0",
-  "description": "Skills de apoio ao desenvolvimento: arranque de projetos com escolha de stack e scaffold.",
+  "version": "0.2.0",
+  "description": "Skills de apoio ao desenvolvimento: start-development (arranque, planeamento e implementação com testes reais), test-application (validar/criar/correr testes) e fix-application (reestruturar uma app existente para o stack e práticas-alvo).",
   "author": {
     "name": "Iuri Peniche",
     "email": "iuri@pgtecmed.com"
