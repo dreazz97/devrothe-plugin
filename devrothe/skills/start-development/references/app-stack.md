@@ -49,16 +49,39 @@ pnpm add -D vitest @testing-library/react @testing-library/jest-dom jsdom
 - Montar `<QueryClientProvider>` (TanStack Query) e `<Toaster />` (sonner) na raiz da app.
 - Definir a base URL da API por variável de ambiente (`VITE_API_URL`).
 
-Estrutura sugerida:
+Estrutura robusta e feature-first (criar as pastas no scaffold, `.gitkeep` nas vazias):
 
 ```
-src/
-├── components/   (ui/ gerado pelo shadcn)
-├── pages/ ou routes/
-├── lib/          (cliente HTTP, query client, utils)
-├── hooks/
-└── features/     (organização por domínio)
+.
+├── src/
+│   ├── app/                  # bootstrap: providers (query, theme, toaster), router, App.tsx
+│   ├── routes/               # definição de rotas (react-router) ou pages/
+│   ├── components/
+│   │   ├── ui/               # primitivos shadcn/ui (gerado)
+│   │   └── shared/           # layout, navegação, componentes de alto nível
+│   ├── features/             # um diretório por domínio/feature
+│   │   └── <feature>/
+│   │       ├── api/          # chamadas HTTP + hooks de query/mutation (TanStack Query)
+│   │       ├── components/
+│   │       ├── hooks/
+│   │       ├── schemas.ts    # Zod
+│   │       ├── types.ts
+│   │       └── index.ts      # API pública da feature
+│   ├── lib/                  # http client, queryClient, utils, env
+│   ├── hooks/                # hooks globais
+│   ├── config/               # constantes, config de runtime
+│   ├── types/                # tipos globais
+│   ├── assets/
+│   └── styles/
+└── tests/
+    ├── unit/                 # Vitest + Testing Library (lógica e componentes)
+    └── e2e/                  # Playwright (fluxos críticos)
 ```
+
+- Importar apenas o `index.ts` de cada feature a partir de fora; não alcançar internals de outra
+  feature. O que for partilhado sobe para `lib/`, `components/shared/` ou `hooks/`.
+- Testes de componente podem ficar colocados (`*.test.tsx` junto ao componente) ou em `tests/unit/`;
+  ver `testing.md` para a convenção e o que cobrir.
 
 ## Backend Node (Express)
 
@@ -70,10 +93,40 @@ pnpm add -D typescript tsx @types/express @types/cors prisma
 pnpm add -D vitest supertest @types/supertest
 ```
 
-- TypeScript com `tsx` para dev (`tsx watch src/index.ts`).
+- TypeScript com `tsx` para dev (`tsx watch src/server.ts`).
 - Validar input nas fronteiras com Zod; partilhar schemas com o frontend quando possível.
 - `helmet` + `cors` configurado para a origem do frontend.
-- Estrutura por camadas: `routes/ → controllers/ → services/ → repositories (Prisma)`.
+
+Estrutura robusta, feature-first com camadas por módulo (criar as pastas no scaffold):
+
+```
+.
+├── src/
+│   ├── app.ts                    # cria a app Express (middleware, rotas) — sem listen
+│   ├── server.ts                 # bootstrap: listen, graceful shutdown
+│   ├── config/                   # env (validado com Zod), constantes
+│   ├── modules/                  # um diretório por domínio
+│   │   └── <module>/
+│   │       ├── <module>.routes.ts
+│   │       ├── <module>.controller.ts   # HTTP in/out
+│   │       ├── <module>.service.ts      # regras de negócio
+│   │       ├── <module>.repository.ts   # acesso a dados (Prisma)
+│   │       ├── <module>.schema.ts       # Zod (validação de request)
+│   │       └── <module>.types.ts
+│   ├── middleware/               # error handler, auth, validação, rate-limit
+│   ├── lib/                      # prisma client, logger, helpers
+│   └── utils/
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+└── tests/
+    ├── unit/                     # Vitest (services, utils — sem I/O)
+    └── integration/              # supertest sobre app.ts (rotas + BD de teste)
+```
+
+- Fluxo de uma rota: `routes → controller → service → repository`. O controller não fala com o Prisma
+  diretamente; a regra de negócio vive no service. Porquê: testabilidade e fronteiras claras.
+- Ver `testing.md` para o que cobrir em cada camada e o gate de testes verde.
 
 ## Backend Python (FastAPI)
 
@@ -88,8 +141,40 @@ pip install -U pytest httpx
 - ORM: **SQLAlchemy + Alembic** (Prisma não é idiomático em Python). Inicializar migrations com
   `alembic init alembic`.
 - Servir em dev: `uvicorn app.main:app --reload`.
-- Estrutura: `app/ (main.py, api/, models/, schemas/, services/, db/)`.
 - Gerir dependências num `requirements.txt` ou `pyproject.toml`.
+
+Estrutura robusta, feature-first com camadas por módulo (criar as pastas no scaffold):
+
+```
+.
+├── app/
+│   ├── main.py                   # cria a app FastAPI, regista routers e middleware
+│   ├── core/                     # config (Pydantic settings), security, logging
+│   │   ├── config.py
+│   │   └── security.py
+│   ├── api/
+│   │   ├── deps.py               # dependências partilhadas (auth, sessão DB)
+│   │   └── v1/                   # versão da API; agrega os routers dos módulos
+│   ├── modules/                  # um diretório por domínio
+│   │   └── <module>/
+│   │       ├── router.py         # endpoints (HTTP in/out)
+│   │       ├── service.py        # regras de negócio
+│   │       ├── repository.py     # acesso a dados (SQLAlchemy)
+│   │       ├── models.py         # modelos SQLAlchemy
+│   │       └── schemas.py        # schemas Pydantic (request/response)
+│   └── db/
+│       ├── base.py               # Declarative Base + import dos models
+│       └── session.py            # engine + SessionLocal
+├── alembic/                      # migrations
+├── alembic.ini
+└── tests/
+    ├── unit/                     # pytest (services, lógica de domínio)
+    └── integration/              # httpx (TestClient/AsyncClient) sobre a app + BD de teste
+```
+
+- Fluxo de um endpoint: `router → service → repository`. O router não toca na sessão SQLAlchemy
+  diretamente; injeta dependências via `api/deps.py` e delega a regra de negócio ao service.
+- Ver `testing.md` para o que cobrir em cada camada e o gate de testes verde.
 
 ## Base de dados
 

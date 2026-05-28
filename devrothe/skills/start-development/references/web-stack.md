@@ -59,15 +59,48 @@ Nota: `framer-motion` é o pacote pedido; o seu sucessor publica-se também como
 
 ## Estrutura de pastas
 
+Estrutura robusta e feature-first. Criar estas pastas no scaffold (usar `.gitkeep` nas que comecem
+vazias). As rotas vivem em `app/`; o código de cada domínio vive em `features/<feature>/` e é
+importado pelas rotas — manter as páginas finas.
+
 ```
-src/
-├── app/                # rotas (App Router)
-├── components/         # componentes partilhados
-│   └── ui/             # gerado pelo shadcn/ui
-├── lib/                # utilitários (ex.: lib/utils.ts, lib/prisma.ts)
-├── hooks/              # hooks reutilizáveis
-└── server/             # Server Actions e lógica de servidor
+.
+├── src/
+│   ├── app/                      # App Router: layouts, pages, loading/error, route handlers
+│   │   ├── (marketing)/          # route groups por área (público vs autenticado)
+│   │   ├── (app)/
+│   │   └── api/                  # route handlers (REST/webhooks)
+│   ├── components/
+│   │   ├── ui/                   # primitivos shadcn/ui (gerado)
+│   │   └── shared/               # componentes partilhados de alto nível (layout, nav)
+│   ├── features/                 # um diretório por domínio/feature
+│   │   └── <feature>/
+│   │       ├── components/       # UI específica da feature
+│   │       ├── hooks/
+│   │       ├── actions.ts        # Server Actions
+│   │       ├── queries.ts        # leituras de dados (server)
+│   │       ├── schemas.ts        # Zod
+│   │       └── types.ts
+│   ├── server/                   # lógica de servidor partilhada (services, auth, db helpers)
+│   ├── lib/                      # clientes e utilitários (prisma.ts, utils.ts, env.ts)
+│   ├── hooks/                    # hooks globais
+│   ├── config/                   # site config, navegação, constantes
+│   ├── types/                    # tipos globais
+│   └── styles/                   # globals.css
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+├── tests/
+│   ├── unit/                     # Vitest
+│   └── e2e/                      # Playwright
+└── public/
 ```
+
+- Validar `env.ts` com Zod no arranque (falhar cedo se faltar uma variável).
+- Cada feature expõe a sua API interna pelas pastas acima; evitar importar internals de uma feature
+  noutra — passar pelo que está em `server/` ou `lib/` quando for partilhado.
+- Testes: `tests/unit/` (Vitest + Testing Library) e `tests/e2e/` (Playwright). Ver `testing.md` para
+  o que cobrir em cada camada e o gate de testes verde.
 
 ## Base de dados (Prisma + PostgreSQL)
 

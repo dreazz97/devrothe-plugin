@@ -4,7 +4,7 @@ Ler apenas as secções dos módulos ativados na entrevista. Cada módulo aplica
 escolhido (Next.js ou React+Vite+backend).
 
 ## Contents
-- auth — Autenticação (JWT em cookies httpOnly)
+- auth — Autenticação (Keycloak ou JWT próprio em cookies httpOnly)
 - storage — Armazenamento de ficheiros (MinIO / S3)
 - observability — Observabilidade em Kubernetes (Prometheus + OpenTelemetry)
 - logging — Logging estruturado (Pino / structlog)
@@ -12,12 +12,24 @@ escolhido (Next.js ou React+Vite+backend).
 - email — Email transacional (Resend)
 - compose — Serviços de dev (Docker Compose)
 
-## auth — Autenticação (JWT em cookies httpOnly)
+## auth — Autenticação (Keycloak ou JWT próprio em cookies httpOnly)
 
-O token JWT vive num cookie `httpOnly`, `Secure`, `SameSite=Lax` (ou `Strict`). Porquê: um cookie
-httpOnly não é acessível por JavaScript, o que mitiga roubo de token por XSS — ao contrário de guardar
-o token em `localStorage`. Com `SameSite` mitiga-se CSRF; para fluxos cross-site, acrescentar um token
+O utilizador escolhe a abordagem na entrevista: **Keycloak (OIDC)**, **JWT próprio (cookies httpOnly)**
+ou **deixar o AI decidir**. Em qualquer das opções, os tokens/sessão vivem em cookies `httpOnly`,
+`Secure`, `SameSite=Lax` (padrão BFF) — Keycloak não dispensa boas práticas de cookies. Porquê: um
+cookie httpOnly não é acessível por JavaScript, o que mitiga roubo de token por XSS, ao contrário de
+guardar tokens no `localStorage`. Com `SameSite` mitiga-se CSRF; para fluxos cross-site, juntar um token
 anti-CSRF.
+
+### Quando é o AI a decidir
+
+- **Keycloak** quando: é preciso SSO / identidade centralizada, vários apps/serviços partilham login,
+  login social ou federação (OIDC/SAML), gestão de utilizadores e roles fora da app (admin UI),
+  requisitos enterprise/compliance, ou a organização já usa Keycloak.
+- **JWT próprio** quando: app única e mais simples, sem IdP externo, infraestrutura mínima e controlo
+  total do fluxo, sem necessidade de SSO/federação.
+
+### Opção A — JWT próprio (cookies httpOnly)
 
 - **Node/Next.js**: `pnpm add jose bcrypt` (`jose` para assinar/verificar JWT; `bcrypt` ou `argon2`
   para hash de passwords). Em Next.js, definir o cookie via `cookies()` nas Server Actions / Route
@@ -29,6 +41,25 @@ anti-CSRF.
 
 Guardar o segredo de assinatura em variável de ambiente. Definir expiração curta no access token e,
 se necessário, um refresh token rotativo.
+
+### Opção B — Keycloak (OIDC)
+
+Keycloak é um Identity Provider open-source (OIDC/OAuth2/SAML). Corre como serviço próprio (adicionar
+ao Docker Compose em dev — ver secção `compose`) com Postgres como BD. Criar um *realm* e um *client*;
+usar o fluxo **Authorization Code + PKCE**. Validar sempre os tokens contra o JWKS do Keycloak
+(`/realms/<realm>/protocol/openid-connect/certs`) — nunca confiar no token sem verificar a assinatura.
+
+- **Next.js**: usar Auth.js (`pnpm add next-auth`) com o provider Keycloak; a sessão fica em cookie
+  httpOnly. Alternativa de baixo nível: `openid-client`.
+- **React + Vite (SPA)**: `pnpm add oidc-client-ts` (ou `keycloak-js`) com Authorization Code + PKCE.
+  Preferir o padrão BFF (o backend guarda os tokens em cookie httpOnly) a guardar tokens no browser.
+- **Express**: validar o access token contra o JWKS com `jose` (`createRemoteJWKSet`); autorizar por
+  role/scope do token.
+- **FastAPI**: validar o JWT contra o JWKS com `authlib` (ou `python-jose` + `httpx` para obter as
+  chaves); ler roles/claims para autorização.
+
+Configurar por env: `KEYCLOAK_ISSUER` (URL do realm), `KEYCLOAK_CLIENT_ID` e, em clients confidential,
+`KEYCLOAK_CLIENT_SECRET`. Não usar as credenciais de admin por defeito do Keycloak em produção.
 
 ## storage — Armazenamento de ficheiros (MinIO / S3)
 
@@ -88,7 +119,8 @@ Para verificação de conta, recuperação de password, recibos/encomendas.
 ## compose — Serviços de dev (Docker Compose)
 
 Subir as dependências de runtime localmente para um ambiente reproduzível. Incluir apenas os serviços
-necessários (Postgres sempre que houver BD; MinIO se o módulo `storage` estiver ativo).
+necessários (Postgres sempre que houver BD; MinIO se o módulo `storage` estiver ativo; Keycloak se a
+autenticação for por Keycloak).
 
 ```yaml
 services:
@@ -110,6 +142,20 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     ports: ["9000:9000", "9001:9001"]
     volumes: ["miniodata:/data"]
+
+  # Só se a autenticação for por Keycloak
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/app
+      KC_DB_USERNAME: app
+      KC_DB_PASSWORD: app
+    ports: ["8080:8080"]
+    depends_on: [postgres]
 
 volumes:
   pgdata:
