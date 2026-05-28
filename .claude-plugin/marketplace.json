@@ -1,0 +1,15 @@
+{
+  "name": "devrothe",
+  "owner": {
+    "name": "Iuri Peniche",
+    "email": "iuri@pgtecmed.com"
+  },
+  "description": "Marketplace de skills de apoio ao desenvolvimento.",
+  "plugins": [
+    {
+      "name": "devrothe",
+      "source": "./devrothe",
+      "description": "Skills de apoio ao desenvolvimento: arranque de projetos com escolha de stack e scaffold (skill start-development)."
+    }
+  ]
+}
