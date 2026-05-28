@@ -22,11 +22,19 @@ no way to roll back.
 the end of each one; only move to the next with the previous one green. Why: errors are caught early
 and stay isolated to the phase that introduced them.
 
+**Rule: professional UI/UX when aligning the frontend.** When the restructuring touches UI, bring it
+up to `../create-application/references/design.md` — professional UI/UX fundamentals and none of the
+AI-slop tells (emojis as UI, cliché purple→blue gradients, untouched stock defaults, buzzword copy).
+Why: aligning to the target methodology includes the visual quality bar, not just the file layout.
+Behavior preservation still holds — improve the design without changing what features do, and flag any
+notable visual change as a deliberate plan item rather than a silent side effect.
+
 **Target methodology.** The destination is defined by `create-application`. Consult:
 `../create-application/references/web-stack.md` and `../create-application/references/app-stack.md`
-(stack and folder structure), `../create-application/references/modules.md` (auth, storage, etc.) and
-`../create-application/references/testing.md` (tests). To classify the app and detect/run tests, use
-`../test-application/references/app-analysis.md` and `../test-application/references/detect-and-run.md`.
+(stack and folder structure), `../create-application/references/modules.md` (auth, storage, etc.),
+`../create-application/references/testing.md` (tests) and `../create-application/references/design.md`
+(UI/UX). To classify the app and detect/run tests, use `../test-application/references/app-analysis.md`
+and `../test-application/references/detect-and-run.md`.
 
 ## Flow
 

@@ -31,12 +31,13 @@ Compare the project with the `create-application` destination. For each item, ma
 | Server-state | TanStack Query |
 | ORM / DB | Prisma (Node) or SQLAlchemy+Alembic (Python) over PostgreSQL |
 | Folder structure | robust feature-first (see web-stack.md / app-stack.md) |
+| UI/UX design | professional, accessible; no AI-slop tells (see design.md) |
 | Tests | real layer (see testing.md) |
 | Dev infra | Docker Compose (Postgres, and MinIO/Keycloak if applicable) |
 | Modules | auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments, email |
 
-Target details in `../create-application/references/web-stack.md`, `app-stack.md`, `modules.md` and
-`testing.md`.
+Target details in `../create-application/references/web-stack.md`, `app-stack.md`, `modules.md`,
+`testing.md` and `design.md`.
 
 ## Bug/error detection
 

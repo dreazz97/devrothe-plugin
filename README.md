@@ -23,6 +23,7 @@ Devrothe Plugin/
         │       ├── web-stack.md        # Next.js stack
         │       ├── app-stack.md        # React+Vite + backend stack
         │       ├── testing.md          # testing strategy
+        │       ├── design.md           # professional UI/UX + anti-AI-slop rules
         │       └── modules.md          # conditional modules
         ├── test-application/
         │   ├── SKILL.md                # detect/run tests or analyze + create + report
@@ -141,6 +142,11 @@ Every solution is generated with a **robust, feature-first folder structure** (o
 separation of UI/server/data layers and predictable locations for schemas, types, config and tests),
 defined in each stack's reference files. Tests are not just scaffolding: the implementation writes
 **real tests** per feature (see `devrothe/skills/create-application/references/testing.md`).
+
+UI is held to a **professional UI/UX bar** (hierarchy, spacing, type scale, WCAG AA contrast,
+focus/keyboard states) and deliberately avoids the generic AI-generated look — no emojis as UI, no
+cliché purple→blue gradients, no untouched stock defaults or buzzword filler (see
+`devrothe/skills/create-application/references/design.md`).
 
 ### Workflow
 

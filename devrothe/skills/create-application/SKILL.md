@@ -32,6 +32,13 @@ scaffold are not enough. Why: the test layer provisioned by the scaffold is just
 tests that assert behavior there is no safety net, and a "green" but empty test gate is theater. A
 green test suite is a completion gate (step 7).
 
+**Rule: professional UI/UX, not the generic AI look.** For any UI, follow `references/design.md` —
+respect UI/UX fundamentals (visual hierarchy, consistent spacing scale, deliberate type scale, WCAG AA
+contrast, focus/keyboard states, responsiveness, purposeful motion) and avoid the tells of
+AI-generated design (emojis as UI, cliché purple→blue gradients, blindly-applied boilerplate hero +
+identical 3-card grids, untouched stock defaults, buzzword filler copy). Why: the default "AI slop"
+aesthetic looks mass-produced and unprofessional — deliberate, restrained design is the baseline.
+
 ## Workflow
 
 Copy this checklist into the response and tick items off:
@@ -139,6 +146,8 @@ For each slice:
 3. Run the slice's tests and iterate (write → run → fix) until they pass.
 4. Update the tasks (`TaskUpdate`) and the README as needed before moving to the next slice.
 
+For any UI built in a slice, follow `references/design.md` (professional UI/UX, no AI-slop tells).
+
 Do not mark a slice as done with its tests failing. Cover the happy path and the relevant
 errors/edge cases of each feature — do not leave features half-done.
 
@@ -177,6 +186,8 @@ hard to verify reliably with AI. List the concrete manual checks worth doing (se
   FastAPI/Python backend, and the criteria for choosing the backend.
 - **`references/testing.md`** — testing strategy: what to test per layer, location conventions, tools
   per stack and the green test gate. Read during implementation (step 6).
+- **`references/design.md`** — professional UI/UX rules and anti-AI-slop guidance. Read when building
+  any UI (step 6).
 - **`references/modules.md`** — conditional modules: `auth`, `storage` (MinIO), `observability`
   (Kubernetes), `logging`, `payments` (Stripe), `email` (Resend). Read only the sections of the
   modules activated in the interview.

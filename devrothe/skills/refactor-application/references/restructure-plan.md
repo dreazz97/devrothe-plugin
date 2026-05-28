@@ -29,6 +29,8 @@ Suggestion (adjust to the project and the detected facets):
 3. **Base tooling** — TypeScript, pnpm, ESLint + Prettier, `dev/build/lint/test` scripts.
 4. **Stack/dependency alignment** — UI (Tailwind + shadcn/ui + lucide-react, framer-motion,
    next-themes, sonner), Zod + React Hook Form, TanStack Query, ORM (Prisma/SQLAlchemy) over Postgres.
+   When there is UI, also align it to professional UI/UX and remove AI-slop tells (see
+   `../create-application/references/design.md`); flag notable visual changes as deliberate plan items.
 5. **Folder structure** — migrate to robust feature-first (see `../create-application/references/`
    `web-stack.md` or `app-stack.md`), moving the code by domain.
 6. **Modules** — align auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments,
