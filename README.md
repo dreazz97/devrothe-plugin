@@ -24,6 +24,7 @@ Devrothe Plugin/
         │       ├── app-stack.md        # React+Vite + backend stack
         │       ├── testing.md          # testing strategy
         │       ├── design.md           # professional UI/UX + anti-AI-slop rules
+        │       ├── security.md         # PoC/demo gate + secure-by-default baseline
         │       └── modules.md          # conditional modules
         ├── test-application/
         │   ├── SKILL.md                # detect/run tests or analyze + create + report
@@ -148,6 +149,14 @@ focus/keyboard states) and deliberately avoids the generic AI-generated look —
 cliché purple→blue gradients, no untouched stock defaults or buzzword filler (see
 `devrothe/skills/create-application/references/design.md`).
 
+For a real application it is also **secure-by-default**: input validation at the boundary,
+authorization/ownership checks, parameterized data access, safe auth/secrets, security headers + HTTPS,
+rate limiting on sensitive endpoints and OWASP Top 10 awareness (see
+`devrothe/skills/create-application/references/security.md`). This is **gated on a PoC/demo decision** —
+a throwaway prototype skips the hardening (only the repo-hygiene floor, never committing secrets,
+always applies), and when the posture is ambiguous the AI asks you. The decision is recorded in the
+project so the other skills honor it.
+
 ### Workflow
 
 1. Interview (functional scope + stack decisions)
@@ -195,6 +204,10 @@ creates real tests per facet, runs them (with authorization) and presents a repo
    — no placeholders or empty snapshots. The report also recommends **manual checks** (UI/UX in a real
    browser), since graphical aspects are hard to verify reliably with AI.
 
+For a real app, the coverage map and the plan also include **security cases** — access control (IDOR /
+unauthenticated access rejected), input validation, auth flows and webhook signatures — and treat the
+critical paths (auth, payments, PII, tenancy) as must-cover. This is gated: skipped for a PoC/demo.
+
 ---
 
 ## Skill: `refactor-application`
@@ -213,9 +226,12 @@ of `test-application`.
 
 ### Flow
 
-1. **Analysis** — app type and facets, deviation map against the target methodology, and bug/error
-   detection.
-2. **Phased restructuring plan** (low risk first), with a section dedicated to the bugs to fix.
+1. **Analysis** — app type and facets, deviation map against the target methodology, bug/error
+   detection and, for a real app, **security findings** (red flags + deviations from the baseline, with
+   severities).
+2. **Phased restructuring plan** (low risk first), with a section dedicated to the bugs to fix and (for
+   a real app) one for the security findings — fixes that change observable behavior are flagged as
+   deliberate, like the bugs.
 3. **Confirmation** — presents the plan, effort and risks; nothing is changed before the "yes" (heavy
    migrations can be approved phase by phase).
 4. **Safety net** — branch/commit (or backup) before touching anything.
@@ -248,13 +264,16 @@ test flow). Understands first, plans, discloses impact, then builds with real te
 3. **Plan** — runs an extensive codebase analysis when the conversation lacks context, then a plan of
    small slices; presented for approval.
 4. **Impact** — after approval and before coding, states the blast radius: whether it can break the
-   app, which existing features it touches, or that it is isolated.
+   app, which existing features it touches, or that it is isolated — plus, for a real app, the
+   **security impact** (new attack surface and its severity, or none).
 5. **Implement** — slice by slice, following the project's stack/structure/conventions (professional
-   UI/UX, no AI-slop tells), with a safety net for changes to existing code.
-6. **Tests & validate** — real tests for the feature, green suite + lint/build/startup, and the
-   manual-testing disclaimer (browser UI/UX).
+   UI/UX, no AI-slop tells; secure-by-default for a real app), with a safety net for changes to
+   existing code.
+6. **Tests & validate** — real tests for the feature (including security-relevant ones for a real app),
+   green suite + lint/build/startup, and the manual-testing disclaimer (browser UI/UX).
 
-> Preserves existing behavior — the feature must not break or change other features.
+> Preserves existing behavior — the feature must not break or change other features. Security hardening
+> is gated on the project's PoC/demo posture (skipped for a throwaway, applied for a real app).
 
 ---
 

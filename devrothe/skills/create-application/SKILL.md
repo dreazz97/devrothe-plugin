@@ -39,19 +39,29 @@ AI-generated design (emojis as UI, cliché purple→blue gradients, blindly-appl
 identical 3-card grids, untouched stock defaults, buzzword filler copy). Why: the default "AI slop"
 aesthetic looks mass-produced and unprofessional — deliberate, restrained design is the baseline.
 
+**Rule: secure-by-default — unless it is a PoC/demo.** For a real application, build in the security
+baseline from `references/security.md` (input validation at the boundary, authorization/ownership
+checks, parameterized data access, safe auth/secrets, security headers + HTTPS, rate limiting on
+sensitive endpoints, OWASP Top 10 awareness). This is **gated**: if the project is a throwaway
+PoC/demo, skip the hardening (the gate in `references/security.md` says how to decide, and to **ask the
+user when it is ambiguous**); only the minimum repo-hygiene floor (never commit real secrets/data)
+still applies. Why: hardening is cheap up front and ruinous to retrofit on a real app, but pure
+friction on a disposable prototype — so the PoC/demo decision drives it, and a wrong guess is costly
+either way.
+
 ## Workflow
 
 Copy this checklist into the response and tick items off:
 
 ```
 - [ ] 0. Context — read CLAUDE.md, memory and READMEs/docs of the project (if any)
-- [ ] 1. Interview — stack requirements + functional scope (features, entities, flows)
-- [ ] 2. Resolve the stack from the answers
+- [ ] 1. Interview — stack requirements + functional scope (features, entities, flows) + security posture (PoC/demo or real app)
+- [ ] 2. Resolve the stack from the answers (+ the security baseline if it is a real app)
 - [ ] 3. Plan — design the features/tasks to build
-- [ ] 4. Confirm — stack + plan with the user (nothing is written/installed before the "yes")
-- [ ] 5. Scaffold — structure, dependencies, configs and README
-- [ ] 6. Implementation — feature by feature, driven by the plan, with real tests
-- [ ] 7. Verify — lint, build, startup AND a green test suite (completion gate)
+- [ ] 4. Confirm — stack + plan + security posture with the user (nothing is written/installed before the "yes")
+- [ ] 5. Scaffold — structure, dependencies, configs and README (security baseline if applicable)
+- [ ] 6. Implementation — feature by feature, driven by the plan, with real tests (secure-by-default if applicable)
+- [ ] 7. Verify — lint, build, startup AND a green test suite (completion gate); security checkpoint if applicable
 ```
 
 ### 0. Project context
@@ -106,9 +116,22 @@ SPA decoupled from its own backend.
 If the backend is Python/FastAPI, also ask whether Express/Node is preferred — otherwise decide based
 on the project (see `references/app-stack.md` for the criteria).
 
+**Security posture** — determine whether this is a real application or a throwaway PoC/demo, because it
+decides whether the security baseline is built in (see the gate in `references/security.md`). Infer it
+from the functional scope first: real users, authentication, payments, PII or a production deployment
+mean "real app — apply security"; an explicit prototype/demo/spike with only fake data and no exposure
+means "PoC — skip hardening". **If it is ambiguous, ask** with `AskUserQuestion` (single choice:
+*"Real application — apply the security baseline"* vs *"PoC/demo — skip it"*). Note: "PoC" as the
+*project type* (Next.js base stack) does not by itself mean PoC for security — an e-commerce or a site
+handling real data is a real app even on the Next.js base.
+
 ### 2. Resolve the stack
 
-Combine the base stack with the activated modules. Always apply the cross-cutting defaults below.
+Combine the base stack with the activated modules. Always apply the cross-cutting defaults below. If
+the security posture is "real app", also fold in the security baseline from `references/security.md`
+(headers, input validation, authorization, rate limiting, secrets hygiene) — woven across the
+features, not bolted on. Record the posture decision in the README/CLAUDE.md (step 5) so the other
+skills honor it later.
 
 ### 3. Plan
 
@@ -116,6 +139,11 @@ From the functional scope, design a development plan: split it into **small vert
 order them by dependency (typically: data model → authentication → domain features → UI/integrations).
 For each slice, note what goes in and which tests cover it. Record the plan as tasks with `TaskCreate`
 to track progress during implementation.
+
+For a real app, treat security as **cross-cutting** rather than a separate slice: each slice that
+handles input, persistence, auth or external calls carries its own validation, authorization and tests
+(see `references/security.md`). Call out in the plan any slice with notable security weight (auth,
+payments, uploads, anything touching PII) so its hardening and tests are explicit.
 
 ### 4. Confirm
 
@@ -132,8 +160,15 @@ test ones), generate the base configs and create the robust folder structure.
 
 Generate a `README.md` at the project root with, at minimum: a short description, the chosen stack,
 prerequisites, environment variables (`.env`), how to bring up the dev services (Docker Compose), how
-to install and run, and how to run tests and lint. Keep it in sync on any future change (see rule
-above).
+to install and run, and how to run tests and lint. Record the **security posture** here (or in
+CLAUDE.md) so later work honors it. Keep it in sync on any future change (see rule above).
+
+For a real app, set up the security baseline during scaffold (see `references/security.md`, "Per-stack
+setup"): security-headers config (Next.js `headers()`/middleware; `helmet` on Express; a headers
+middleware on FastAPI), CORS locked to the frontend origin, a rate-limit dependency for auth endpoints,
+boundary validation wiring (Zod/Pydantic), and `.gitignore` covering `.env`/`*.pem`/`*.key`/`secrets/`
+**before the first commit**. The minimum repo-hygiene floor (no committed secrets/real data) applies
+even to PoCs.
 
 ### 6. Implementation
 
@@ -146,7 +181,10 @@ For each slice:
 3. Run the slice's tests and iterate (write → run → fix) until they pass.
 4. Update the tasks (`TaskUpdate`) and the README as needed before moving to the next slice.
 
-For any UI built in a slice, follow `references/design.md` (professional UI/UX, no AI-slop tells).
+For any UI built in a slice, follow `references/design.md` (professional UI/UX, no AI-slop tells). For
+a real app, build each slice secure-by-default (`references/security.md`): validate input at the
+boundary, enforce authorization/ownership on protected routes, use parameterized data access, and add
+the security-relevant tests (e.g., a denied cross-user access, a rejected malformed payload).
 
 Do not mark a slice as done with its tests failing. Cover the happy path and the relevant
 errors/edge cases of each feature — do not leave features half-done.
@@ -157,6 +195,12 @@ The task is only done when, in the generated project: dependency install passes,
 passes, the app starts, **and the full test suite is green**. Run the tests as the final gate; if any
 fails (or is improperly skipped/xfail), fix it before calling it done. Also confirm the README
 reflects the real state.
+
+For a real app, add a quick **security checkpoint** before calling it done (see `references/security.md`):
+the baseline is in place (headers, locked CORS, boundary validation, authz on protected routes, rate
+limiting on auth), no secrets are committed and `.gitignore` covers them, the dependency audit
+(`pnpm audit`/`pip-audit`) surfaces no unresolved known-vulnerable packages, and the security-relevant
+tests pass. For a PoC/demo, skip this checkpoint beyond the repo-hygiene floor.
 
 **Manual testing disclaimer (always tell the user).** A green suite is not the whole picture: some
 checks are still recommended to be done manually — especially **UI/UX interaction in a real browser**
@@ -188,6 +232,9 @@ hard to verify reliably with AI. List the concrete manual checks worth doing (se
   per stack and the green test gate. Read during implementation (step 6).
 - **`references/design.md`** — professional UI/UX rules and anti-AI-slop guidance. Read when building
   any UI (step 6).
+- **`references/security.md`** — the PoC/demo gate and the secure-by-default baseline (OWASP Top 10,
+  secrets/deps, per-stack setup, security testing, severities). Read in steps 1–2 (gate) and 5–7
+  (apply) for a real app.
 - **`references/modules.md`** — conditional modules: `auth`, `storage` (MinIO), `observability`
   (Kubernetes), `logging`, `payments` (Stripe), `email` (Resend). Read only the sections of the
   modules activated in the interview.

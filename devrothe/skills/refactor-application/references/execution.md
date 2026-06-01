@@ -32,7 +32,9 @@ that goes wrong.
 ## Preserve behavior
 
 - Move/rename/reorganize and swap technologies while keeping the same functional result.
-- The only allowed behavior change is fixing the bugs listed in the plan — and that is recorded.
+- The only allowed behavior changes are the **bugs** and the **behavior-changing security findings**
+  listed in the plan — and both are recorded and approved (see the security findings section in
+  `restructure-plan.md`). Do not alter security behavior silently any more than feature behavior.
 - When a test exists for an area, use it as a net before and after refactoring it; if none exists and
   the area is risky, first create a test that pins the current behavior, then refactor.
 
@@ -40,8 +42,10 @@ that goes wrong.
 
 When the phases are finished:
 - Run the full test suite; **create tests** for the affected facets that did not have them (align with
-  `../create-application/references/testing.md`). The suite must end **green**.
+  `../create-application/references/testing.md`), including the security-relevant tests for what was
+  hardened (real app). The suite must end **green**.
 - Confirm lint, build and startup with no errors.
-- Present a final report: deviations fixed (before → after), bugs resolved, files reorganized, and the
-  test results (totals, failures, coverage if available). State the branch used for the user to
+- Present a final report: deviations fixed (before → after), bugs resolved, **security findings
+  resolved** (with severities, and which fixes changed behavior) for a real app, files reorganized, and
+  the test results (totals, failures, coverage if available). State the branch used for the user to
   review/integrate.

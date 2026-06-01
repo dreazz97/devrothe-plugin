@@ -9,7 +9,7 @@
     {
       "name": "devrothe",
       "source": "./devrothe",
-      "description": "Development-support skills: create-application (bootstrap, planning and implementation with real tests), test-application (validate/create/run tests), refactor-application (restructure an existing app to the target stack and practices) and implement-feature (add a feature to an existing project with impact analysis and real tests)."
+      "description": "Development-support skills: create-application (bootstrap, planning and implementation with real tests), test-application (validate/create/run tests), refactor-application (restructure an existing app to the target stack and practices) and implement-feature (add a feature to an existing project with impact analysis and real tests). All four build/keep apps secure-by-default — gated on a PoC/demo decision."
     }
   ]
 }

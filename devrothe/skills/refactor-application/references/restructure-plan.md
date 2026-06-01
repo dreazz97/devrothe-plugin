@@ -8,6 +8,7 @@ application's behavior.
 - Phase order
 - Structure of each phase
 - Mandatory bugs/errors section
+- Mandatory security findings section (real app)
 
 ## Principles
 
@@ -35,9 +36,16 @@ Suggestion (adjust to the project and the detected facets):
    `web-stack.md` or `app-stack.md`), moving the code by domain.
 6. **Modules** — align auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments,
    email as applicable (see `../create-application/references/modules.md`).
-7. **Tests** — align/add the test layer (see `../create-application/references/testing.md`).
-8. **Remaining bugs/quality** — fix non-blocking bugs and remove dead code/anti-patterns.
-9. **Docs** — update the `README.md` to reflect the final state.
+7. **Security alignment (real app)** — close the security findings and align to the baseline (see
+   `../create-application/references/security.md`): boundary validation, authorization/ownership
+   checks, parameterized data access, security headers, locked CORS, rate limiting, secrets→env. Note:
+   the CRITICAL secrets-in-code/history findings are pulled forward (rotate the secret; `.gitignore`
+   does not remove history), and behavior-changing fixes carry the deliberate-change flag. Skip this
+   phase entirely for a PoC/demo (beyond the repo-hygiene floor).
+8. **Tests** — align/add the test layer (see `../create-application/references/testing.md`), including
+   the security-relevant tests for what was hardened (real app).
+9. **Remaining bugs/quality** — fix non-blocking bugs and remove dead code/anti-patterns.
+10. **Docs** — update the `README.md` to reflect the final state (record the security posture).
 
 ## Structure of each phase
 
@@ -51,4 +59,20 @@ For each phase, record (and create a task with `TaskCreate`):
 
 The plan always includes a section with **all bugs/errors detected in the analysis**, each with:
 severity, symptom, likely cause, the phase in which it will be fixed and how it will be validated.
-Blocking ones go to phase 2; the rest to phase 8 (or to the phase of the module they belong to).
+Blocking ones go to phase 2; the rest to phase 9 (or to the phase of the module they belong to).
+
+## Mandatory security findings section (real app)
+
+For a real app (gated — skip for a PoC/demo), the plan includes a section listing **all security
+findings from the analysis**, each with: severity (CRITICAL/HIGH/MEDIUM/LOW), the issue, the phase that
+fixes it, how it will be validated, and **whether the fix changes observable behavior**.
+
+- **Behavior-preserving fixes** (add headers, lock CORS down to the real origin, move a secret to env,
+  parameterize a query) go in phase 7 (or the relevant alignment phase).
+- **Behavior-changing fixes** (add auth where there was none, enforce validation that previously let
+  bad input through, invalidate sessions on logout) are flagged as **deliberate changes** — like the
+  bug fixes, they are explicit, approved, and may be offered for phase-by-phase approval.
+- **CRITICAL secrets in code/history** are pulled forward and paired with a rotation note (a refactor
+  cannot un-leak a committed secret).
+
+This is the security counterpart of the bugs section: nothing security-relevant is changed silently.

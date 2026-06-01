@@ -29,21 +29,35 @@ Why: aligning to the target methodology includes the visual quality bar, not jus
 Behavior preservation still holds — improve the design without changing what features do, and flag any
 notable visual change as a deliberate plan item rather than a silent side effect.
 
+**Rule: align to the security baseline — unless it is a PoC/demo, and treat fixes like the bugs.** For
+a real app, the target methodology includes the security baseline
+(`../create-application/references/security.md`): the analysis flags the security deviations and red
+flags (with severities), and they are fixed as part of the restructuring. This is **gated** on the
+project's security posture (read it from CLAUDE.md/README; for a PoC/demo skip the hardening beyond the
+repo-hygiene floor; ask the user when ambiguous). Crucially, a security fix that **changes observable
+behavior** (e.g. adding auth where there was none, locking open CORS, enforcing validation that
+previously passed) is *not* covered by "preserve behavior" — handle it exactly like the bug fixes:
+list it explicitly in the plan with its severity, get approval, and flag it as a deliberate change, not
+a silent side effect. Why: a refactor "to align" is the natural moment to close known holes, but
+silently altering the security behavior of a working app is as dangerous as silently changing a
+feature.
+
 **Target methodology.** The destination is defined by `create-application`. Consult:
 `../create-application/references/web-stack.md` and `../create-application/references/app-stack.md`
 (stack and folder structure), `../create-application/references/modules.md` (auth, storage, etc.),
-`../create-application/references/testing.md` (tests) and `../create-application/references/design.md`
-(UI/UX). To classify the app and detect/run tests, use `../test-application/references/app-analysis.md`
-and `../test-application/references/detect-and-run.md`.
+`../create-application/references/testing.md` (tests), `../create-application/references/design.md`
+(UI/UX) and `../create-application/references/security.md` (security baseline + the PoC/demo gate). To
+classify the app and detect/run tests, use `../test-application/references/app-analysis.md` and
+`../test-application/references/detect-and-run.md`.
 
 ## Flow
 
 Copy this checklist into the response and tick items off:
 
 ```
-- [ ] 0. Context — read CLAUDE.md, memory and READMEs/docs of the project (if any)
-- [ ] 1. Analysis — current stack, app type/facets, deviations from the target methodology and bugs/errors
-- [ ] 2. Phased restructuring plan, including the fixes for detected bugs
+- [ ] 0. Context — read CLAUDE.md, memory and READMEs/docs of the project (if any) + the security posture (PoC/demo or real app)
+- [ ] 1. Analysis — current stack, app type/facets, deviations from the target methodology, bugs/errors and security findings
+- [ ] 2. Phased restructuring plan, including the fixes for detected bugs and security findings
 - [ ] 3. Confirm the plan with the user (nothing is changed before the "yes")
 - [ ] 4. Safety net — ensure git/branch or backup
 - [ ] 5. Execute the plan — phase by phase, preserving behavior, updating the README
@@ -63,24 +77,35 @@ Use this context to inform the analysis, the deviation map and the restructuring
 understanding what the app intends to do (and which conventions already exist) is essential to
 restructure without changing behavior nor contradicting deliberate decisions.
 
+Also establish the **security posture** (read it from CLAUDE.md/README if recorded; otherwise infer
+per `../create-application/references/security.md` and ask the user if ambiguous): a real app gets the
+security findings and alignment below; a PoC/demo skips the hardening beyond the repo-hygiene floor.
+
 ### 1. Analysis
 
 Analyze the project without changing it. Produce: the **application type** and facets, a **deviation
 map** against the target methodology (language, tooling, UI, ORM, folder structure, tests, modules)
 and the **list of existing bugs/errors** (broken build/type/lint, runtime, failing tests,
-anti-patterns, security red flags). See `references/assessment.md`.
+anti-patterns). For a real app, also produce a **security findings** list — deviations from the
+baseline and red flags (hardcoded secrets, SQL via string concat, missing authz/IDOR, tokens in
+`localStorage`, open CORS, missing validation/headers), each with a severity. See
+`references/assessment.md`.
 
 ### 2. Restructuring plan
 
 From the analysis, build a **phased** plan (low-risk first), preserving behavior. The plan must include
-an explicit section of **bugs/errors to fix**. Record the phases/tasks with `TaskCreate`. See
-`references/restructure-plan.md`.
+an explicit section of **bugs/errors to fix** and, for a real app, a **security findings to fix**
+section (same treatment as the bugs: severity, the phase that fixes each, and — for fixes that change
+observable behavior — an explicit deliberate-change flag). Record the phases/tasks with `TaskCreate`.
+See `references/restructure-plan.md`.
 
 ### 3. Confirm
 
-Present the full plan to the user: app type, deviations, bugs to fix, phases, effort and risks. Ask for
-approval **before** changing anything. For high-effort migrations (e.g., framework swap), flag them and
-offer phase-by-phase approval. Do not proceed without the "yes".
+Present the full plan to the user: app type, deviations, bugs to fix, security findings to fix (for a
+real app, with their severities and which ones change observable behavior), phases, effort and risks.
+Ask for approval **before** changing anything. For high-effort migrations (e.g., framework swap) and
+behavior-changing security fixes, flag them and offer phase-by-phase approval. Do not proceed without
+the "yes".
 
 ### 4. Safety net
 

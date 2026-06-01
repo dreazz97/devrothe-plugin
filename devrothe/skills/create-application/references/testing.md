@@ -26,6 +26,12 @@ without exercising the real logic.
 Prioritize behavior that matters; do not chase 100% coverage. Each feature in the plan (step 3) should
 come out of implementation with at least its main-layer tests passing.
 
+For a real app (not a PoC/demo), also cover the **security behavior** of what you build — access
+control (IDOR / unauthenticated access rejected), input validation (bad payloads rejected with a 4xx),
+auth flows and webhook signatures. See "Security testing" in `security.md`; treat the critical paths
+(auth, payments, PII, tenancy) as must-cover. These are behavior tests too — they assert a bad request
+is actually refused.
+
 ## Conventions and location
 
 - **Frontend (Next.js, React+Vite)**: unit/component in `tests/unit/` (or colocated as `*.test.tsx`

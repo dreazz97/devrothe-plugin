@@ -12,6 +12,17 @@ and create real tests per facet, run them (with authorization) and present a rep
 errors/edge cases). Avoid trivial asserts, empty snapshots or mocks that return the expected result
 without exercising the logic. Why: a green but empty suite gives false confidence.
 
+**Rule: cover security behavior — unless it is a PoC/demo.** For a real app, the coverage map and the
+test plan treat **security behavior** as testable behavior, not an afterthought: access control (an
+authenticated user denied another user's resource; an unauthenticated request to a protected route
+rejected), input validation (malformed/oversized payloads rejected with a 4xx, not a 500), auth flows
+(rate limit/lockout, logout invalidation, expired/tampered tokens) and webhook signature checks. This
+is **gated** on the project's security posture (read it from CLAUDE.md/README; for a PoC/demo skip the
+security emphasis; ask the user when ambiguous — see
+`../create-application/references/security.md`). Why: the **critical paths** (auth, payments/billing,
+anything touching PII or tenancy) are exactly where a missing test is most dangerous, so they are
+must-cover for a real app.
+
 ## Flow
 
 Copy this checklist into the response and tick items off. The branch is decided by **coverage per
@@ -40,12 +51,19 @@ Before detecting, look for and read metadata that helps understand the applicati
 Use this context to inform the facet analysis and the test plan/creation. Why: the README and the
 CLAUDE.md usually state how to run the app and the tests and which conventions to follow.
 
+Also establish the **security posture** here (read it from CLAUDE.md/README if recorded; otherwise
+infer per `../create-application/references/security.md` and ask the user if ambiguous): for a real app
+the coverage map and the plan include the security cases below; for a PoC/demo they do not.
+
 ### 1. Detect and map coverage
 
 Detect test frameworks, scripts and files (see `references/detect-and-run.md`) **and** classify the
 application's facets (see `references/app-analysis.md`). Cross-reference both to build a **coverage map
 per facet**: for each present facet (UI, backend/API, microservice, etc.), does it have tests or not.
-**Do not write or install anything in this phase** — only observe.
+For a real app, also note whether the **critical/security paths** (auth, payments/billing, PII,
+tenancy) and the security behaviors (access control, input validation, auth flows) are covered — an
+untested critical path is a high-priority gap even when the facet "has tests". **Do not write or
+install anything in this phase** — only observe.
 
 Decide the branch from the map:
 - **All** facets have tests → **Branch A** (step 2).
@@ -88,8 +106,10 @@ If **Yes** → continue to step 5.
 
 Create a plan **only for the facets without tests** (see `references/test-plan.md` for what to cover in
 each). For each facet, list the targets/slices and the test type (unit, integration, component, e2e,
-contract). Record them as tasks with `TaskCreate`. Present the plan and ask for approval **before**
-writing any test.
+contract). For a real app, include the **security cases** that apply to each facet (access control,
+input validation, auth flows, webhook signatures — see `references/test-plan.md`), prioritizing the
+critical paths. Record them as tasks with `TaskCreate`. Present the plan and ask for approval
+**before** writing any test.
 
 ### 6. Create the tests
 
@@ -143,4 +163,6 @@ testing" section with concrete checks for the facets at hand.
 - **`references/detect-and-run.md`** — detection of test frameworks/scripts/files and the commands to
   run per ecosystem; interpreting results. Read in steps 1, 2, 6 and 8.
 - **`references/test-plan.md`** — what to test in each facet of the application and how to structure
-  the plan. Read in steps 5 and 6.
+  the plan, including the per-facet security cases. Read in steps 5 and 6.
+- **`../create-application/references/security.md`** — the PoC/demo gate and the "Security testing"
+  section that the security cases come from. Read in step 0 (posture) and steps 1/5 (real app).
