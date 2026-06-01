@@ -35,7 +35,13 @@ Suggestion (adjust to the project and the detected facets):
 5. **Folder structure** — migrate to robust feature-first (see `../create-application/references/`
    `web-stack.md` or `app-stack.md`), moving the code by domain.
 6. **Modules** — align auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments,
-   email as applicable (see `../create-application/references/modules.md`).
+   email as applicable (see `../create-application/references/modules.md`). Also align the **local run
+   mode** (`compose` section): the dev services belong in Docker Compose; whether to containerize the
+   **app** itself (a `Dockerfile` + `app` service) is the user's choice — offer the same three options
+   as create-application (services-only/native, fully containerized, or both) and only add/keep the
+   Dockerfile if the user wants it. Adding a Dockerfile is behavior-preserving (it does not change how
+   the code runs), but make sure service hosts come from env so the app runs both natively and
+   in-container.
 7. **Security alignment (real app)** — close the security findings and align to the baseline (see
    `../create-application/references/security.md`): boundary validation, authorization/ownership
    checks, parameterized data access, security headers, locked CORS, rate limiting, secrets→env. Note:

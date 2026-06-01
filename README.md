@@ -118,6 +118,8 @@ mandatory pages/endpoints (this feeds the plan and the implementation). Then the
 6. **Structured logging?** → Pino (Node) / structlog (Python)
 7. **Payments?** → Stripe
 8. **Transactional email?** → Resend
+9. **How to run locally?** → choice (radio): services in Docker + app native (default), fully
+   containerized (`Dockerfile` + `app` service, `docker compose up` runs everything), or both
 
 ### Stacks it chooses
 
@@ -133,11 +135,13 @@ React + Vite with the same UI stack above, plus an **Express/Node** or **FastAPI
 
 Activated based on the answers: `auth` (Keycloak or JWT httpOnly), `storage` (MinIO/S3),
 `observability` (Prometheus + OpenTelemetry for Kubernetes), `logging` (Pino/structlog), `payments`
-(Stripe), `email` (Resend) and `compose` (dev services in Docker Compose).
+(Stripe), `email` (Resend) and `compose` (dev services in Docker Compose, plus the chosen local run
+mode — app native, fully containerized, or both).
 
 ### Cross-cutting defaults (always)
 
-TypeScript · pnpm · ESLint + Prettier · Docker Compose for dev · Vitest + Playwright (pytest in Python).
+TypeScript · pnpm · ESLint + Prettier · Docker Compose for dev services (the app runs natively by
+default; full containerization is opt-in) · Vitest + Playwright (pytest in Python).
 
 Every solution is generated with a **robust, feature-first folder structure** (organized by domain,
 separation of UI/server/data layers and predictable locations for schemas, types, config and tests),

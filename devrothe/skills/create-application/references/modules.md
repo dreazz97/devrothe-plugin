@@ -10,7 +10,7 @@ stack already chosen (Next.js or React+Vite+backend).
 - logging — Structured logging (Pino / structlog)
 - payments — Payments (Stripe)
 - email — Transactional email (Resend)
-- compose — Dev services (Docker Compose)
+- compose — Dev services + local run mode (Docker Compose, optional app containerization)
 
 ## auth — Authentication (Keycloak or own JWT in httpOnly cookies)
 
@@ -117,7 +117,32 @@ For account verification, password reset, receipts/orders.
 - **Python**: call the Resend API over HTTP (`pip install resend`).
 - Keep `RESEND_API_KEY` in env. Configure a verified domain for the sender.
 
-## compose — Dev services (Docker Compose)
+## compose — Dev services + local run mode (Docker Compose)
+
+This module covers two things: the **dev services** (always, when the project has runtime
+dependencies) and the **local run mode** chosen in the interview, which decides whether the application
+*itself* is containerized.
+
+### Local run mode (interview question 8)
+
+| Mode | What is generated | `docker compose up` brings up | App runs via |
+|------|-------------------|-------------------------------|--------------|
+| **A — Services in Docker, app native** (default) | only the services compose | Postgres / MinIO / Keycloak | `pnpm dev` / `uvicorn --reload` on the host |
+| **B — Fully containerized** | services compose **+ app `Dockerfile` + `app` service** | everything (app + services) | the `app` container |
+| **C — Both** | the Dockerfile + `app` service, *and* native dev stays working | services by default; everything with the `full` profile | either — host or container |
+
+Why offer the choice: a native app has the fastest inner loop (instant hot-reload, native debugger,
+no rebuild) and is the simplest default; a containerized app gives prod-parity and a single
+`docker compose up` for the whole stack (good for onboarding and demos), at the cost of a heavier loop.
+"Both" is the most flexible but adds maintenance surface (the Dockerfile must be kept in sync).
+
+The one rule that makes every mode work: **read service hosts from env, never hardcode them.** Natively
+the app reaches services on `localhost:<port>`; inside a container it reaches them by the Compose
+service name (`postgres`, `minio`, `keycloak`). So `DATABASE_URL` / `S3_ENDPOINT` / `KEYCLOAK_ISSUER`
+come from env, with `localhost` defaults for native dev and the service-name value injected into the
+`app` service. Apply this whenever any containerization mode (B or C) is chosen.
+
+### Dev services (all modes)
 
 Bring up the runtime dependencies locally for a reproducible environment. Include only the services
 needed (Postgres whenever there is a DB; MinIO if the `storage` module is active; Keycloak if
@@ -165,3 +190,53 @@ volumes:
 
 The credentials above are for dev only. In production, use managed secrets and never the default
 values.
+
+### App containerization (modes B and C only)
+
+Skip this whole subsection for mode A. For modes B and C, add a `Dockerfile` and an `app` service.
+
+**`Dockerfile`** — multi-stage, with a small dev stage (hot-reload over a bind mount) and a lean,
+non-root production stage. Per stack:
+
+- **Node / Next.js / Express**: base on `node:22-slim`. Dev stage installs all deps and runs the dev
+  server (`pnpm dev`); prod stage runs `pnpm build` then ships only production deps and the build
+  output, started with `pnpm start` (Next.js: prefer `output: "standalone"` to shrink the image). Run
+  as a non-root user.
+- **React + Vite (static frontend)**: build with `pnpm build` and serve the static `dist/` behind
+  **nginx** (`nginx:alpine`) in prod; in dev, run the Vite dev server (`pnpm dev --host`) so HMR works
+  through the bind mount.
+- **FastAPI / Python**: base on `python:3.12-slim`. Install deps into a venv; dev runs
+  `uvicorn --reload`, prod runs `uvicorn` (or `gunicorn -k uvicorn.workers.UvicornWorker`) as a
+  non-root user.
+
+Always add a `.dockerignore` (at least `node_modules`, `.git`, `.env`, `dist`/`.next`, test/coverage
+output) so the build context stays small and no secrets leak into the image.
+
+**`app` service** — add it to the same Compose file. For dev, bind-mount the source for hot-reload and
+point the service hosts at the Compose service names via env:
+
+```yaml
+  app:
+    build:
+      context: .
+      target: dev            # the dev stage of the Dockerfile
+    environment:
+      # service names, not localhost — this container talks to the others over the compose network
+      DATABASE_URL: postgresql://app:app@postgres:5432/app
+      # S3_ENDPOINT: http://minio:9000        # if storage is active
+      # KEYCLOAK_ISSUER: http://keycloak:8080/realms/<realm>   # if auth via Keycloak
+    ports: ["3000:3000"]     # Next/Express; Vite: 5173:5173; FastAPI: 8000:8000
+    volumes:
+      - .:/app               # source for hot-reload
+      - /app/node_modules    # keep the image's installed deps (Node)
+    depends_on: [postgres]   # add minio / keycloak when active
+    profiles: ["full"]       # mode C only — see below
+```
+
+**Mode B (fully containerized):** drop the `profiles` line so the `app` service comes up with a plain
+`docker compose up`. The README documents `docker compose up` as the way to run everything.
+
+**Mode C (both):** keep `profiles: ["full"]` on the `app` service. Then `docker compose up` brings up
+**only the services** (native dev unaffected), and `docker compose --profile full up` brings up the app
+too. Because hosts come from env (`localhost` defaults for native, service names injected into the
+`app` service), the same code runs in both. The README documents both paths.

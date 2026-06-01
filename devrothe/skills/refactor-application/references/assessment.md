@@ -35,7 +35,7 @@ Compare the project with the `create-application` destination. For each item, ma
 | Folder structure | robust feature-first (see web-stack.md / app-stack.md) |
 | UI/UX design | professional, accessible; no AI-slop tells (see design.md) |
 | Tests | real layer (see testing.md) |
-| Dev infra | Docker Compose (Postgres, and MinIO/Keycloak if applicable) |
+| Dev infra | Docker Compose (Postgres, and MinIO/Keycloak if applicable); note the current local run mode — services-only vs a `Dockerfile`/`app` service that containerizes the app |
 | Modules | auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments, email |
 | Security (real app) | secure-by-default baseline: validation, authz, headers, rate limiting, secrets hygiene (see security.md) |
 

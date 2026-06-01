@@ -112,6 +112,14 @@ SPA decoupled from its own backend.
 6. Does it process payments? → **Stripe** (`payments` module).
 7. Does it send transactional email (account verification, password reset, orders)? → **Resend**
    (`email` module).
+8. **How should it run locally?** Ask with `AskUserQuestion` (single choice): **(A) Services in Docker,
+   app native** — the default: Docker Compose runs the dev services (Postgres/MinIO/Keycloak) and the
+   app runs on the host (`pnpm dev`/`uvicorn --reload`); fastest inner loop. **(B) Fully containerized**
+   — also generate a `Dockerfile` for the app and an `app` service, so `docker compose up` brings up
+   everything (prod-parity, one command). **(C) Both** — ship the `Dockerfile` + `app` service *and*
+   keep native dev working (most flexible). See the `compose` section in `references/modules.md` for how
+   each mode is wired. If the project has no dev services at all (a 100% static site), default to native
+   and only offer containerization if the user wants a deployable image.
 
 If the backend is Python/FastAPI, also ask whether Express/Node is preferred — otherwise decide based
 on the project (see `references/app-stack.md` for the criteria).
@@ -160,8 +168,10 @@ test ones), generate the base configs and create the robust folder structure.
 
 Generate a `README.md` at the project root with, at minimum: a short description, the chosen stack,
 prerequisites, environment variables (`.env`), how to bring up the dev services (Docker Compose), how
-to install and run, and how to run tests and lint. Record the **security posture** here (or in
-CLAUDE.md) so later work honors it. Keep it in sync on any future change (see rule above).
+to install and run, and how to run tests and lint. Document the **local run mode** chosen in the
+interview — native (`pnpm dev`/`uvicorn`), fully containerized (`docker compose up`) or both — with the
+exact commands for that mode. Record the **security posture** here (or in CLAUDE.md) so later work
+honors it. Keep it in sync on any future change (see rule above).
 
 For a real app, set up the security baseline during scaffold (see `references/security.md`, "Per-stack
 setup"): security-headers config (Next.js `headers()`/middleware; `helmet` on Express; a headers
@@ -217,7 +227,9 @@ hard to verify reliably with AI. List the concrete manual checks worth doing (se
   (light/dark theme) and **sonner** (toasts).
 - **Zod + React Hook Form** (`@hookform/resolvers`) for schema and form validation.
 - **TanStack Query** for client-side server-state.
-- **Docker Compose** for the dev services (PostgreSQL and, if applicable, MinIO).
+- **Docker Compose** for the dev services (PostgreSQL and, if applicable, MinIO). The app itself runs
+  natively by default; full containerization (a `Dockerfile` + `app` service) is opt-in via the
+  local-run-mode question (see `references/modules.md`, `compose` section).
 - **Tests**: Vitest + @testing-library/react + Playwright (Node/JS) and pytest + httpx (Python). The
   layer is installed and configured during scaffold and **filled with real tests** during
   implementation — see `references/testing.md`.
@@ -236,5 +248,6 @@ hard to verify reliably with AI. List the concrete manual checks worth doing (se
   secrets/deps, per-stack setup, security testing, severities). Read in steps 1–2 (gate) and 5–7
   (apply) for a real app.
 - **`references/modules.md`** — conditional modules: `auth`, `storage` (MinIO), `observability`
-  (Kubernetes), `logging`, `payments` (Stripe), `email` (Resend). Read only the sections of the
-  modules activated in the interview.
+  (Kubernetes), `logging`, `payments` (Stripe), `email` (Resend) and `compose` (dev services + the
+  local run mode: app native, fully containerized, or both). Read only the sections of the modules
+  activated in the interview.
