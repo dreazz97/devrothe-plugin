@@ -83,7 +83,7 @@ To iterate on the plugin without going through GitHub, add the marketplace by lo
 | `/create-application` | Interviews, picks the stack, plans, scaffolds and implements the project with real tests. |
 | `/test-application` | Detects and runs the app's tests and reports; if there are none, analyzes the app, creates tests per facet and reports. |
 | `/refactor-application` | Analyzes an existing app, plans the restructuring toward the `create-application` stack/practices, executes (with approval) and validates with tests. |
-| `/implement-feature` | Implements a requested feature in an existing project: clarifies, plans, states the impact, then builds it with real tests following the project's conventions. |
+| `/implement-feature` | Implements one or more requested features in an existing project: clarifies, plans the whole set ordered by dependency, states the impact, then builds them one at a time with real tests following the project's conventions. |
 
 The skills also trigger via natural language (see the triggers below) — using the slash command is not
 mandatory.
@@ -251,33 +251,39 @@ of `test-application`.
 
 ## Skill: `implement-feature`
 
-Implements a feature you request into an existing project, respecting its conventions and reusing the
-methodology of the other skills (`create-application` for structure/tests, `test-application` for the
-test flow). Understands first, plans, discloses impact, then builds with real tests.
+Implements one or more features you request into an existing project, respecting its conventions and
+reusing the methodology of the other skills (`create-application` for structure/tests,
+`test-application` for the test flow). Handles a single feature or a whole list — understands first,
+plans the set, discloses impact, then builds with real tests.
 
 ### How to invoke
 
 - Command: `/implement-feature`
-- Trigger phrases: *"implement a feature"*, *"add a feature"*, *"build this feature"* (plus the
-  Portuguese equivalents).
+- Trigger phrases: *"implement a feature"*, *"implement these features"*, *"add a feature"*, *"build
+  this feature"* (plus the Portuguese equivalents).
 
 ### Flow
 
-1. **Context** — reads CLAUDE.md, memory, READMEs/docs and the codebase area the feature lives in.
-2. **Clarify** — asks you questions if the request is ambiguous (skipped if already clear).
-3. **Plan** — runs an extensive codebase analysis when the conversation lacks context, then a plan of
-   small slices; presented for approval.
-4. **Impact** — after approval and before coding, states the blast radius: whether it can break the
-   app, which existing features it touches, or that it is isolated — plus, for a real app, the
-   **security impact** (new attack surface and its severity, or none).
-5. **Implement** — slice by slice, following the project's stack/structure/conventions (professional
-   UI/UX, no AI-slop tells; secure-by-default for a real app), with a safety net for changes to
-   existing code.
-6. **Tests & validate** — real tests for the feature (including security-relevant ones for a real app),
-   green suite + lint/build/startup, and the manual-testing disclaimer (browser UI/UX).
+1. **Context** — reads CLAUDE.md, memory, READMEs/docs and the codebase area the feature(s) live in.
+2. **Clarify** — lists out the requested feature(s) to confirm scope and asks you questions about any
+   that are ambiguous (skipped if already clear).
+3. **Plan** — runs an extensive codebase analysis when the conversation lacks context, then one
+   consolidated plan of small slices; when several features are requested they are ordered by
+   dependency and grouped per feature. Presented for approval.
+4. **Impact** — after approval and before coding, states the blast radius per feature: whether it can
+   break the app, which existing features it touches, or that it is isolated — plus the cross-feature
+   interactions and, for a real app, the **security impact** (new attack surface and its severity, or
+   none).
+5. **Implement** — one feature at a time in dependency order, each slice by slice, following the
+   project's stack/structure/conventions (professional UI/UX, no AI-slop tells; secure-by-default for a
+   real app), with a safety net for changes to existing code and a checkpoint between features.
+6. **Tests & validate** — real tests per feature (including security-relevant ones for a real app), a
+   green suite + lint/build/startup after each feature and at the end, and the manual-testing
+   disclaimer (browser UI/UX).
 
-> Preserves existing behavior — the feature must not break or change other features. Security hardening
-> is gated on the project's PoC/demo posture (skipped for a throwaway, applied for a real app).
+> Preserves existing behavior — a new feature must not break or change other features (including ones
+> delivered earlier in the same batch). Security hardening is gated on the project's PoC/demo posture
+> (skipped for a throwaway, applied for a real app).
 
 ---
 

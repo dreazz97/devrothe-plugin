@@ -1,12 +1,14 @@
 # Impact analysis (blast radius)
 
 Read in step 3. After the plan is approved and **before changing any code**, tell the user, clearly and
-explicitly, how far this feature reaches. Always give a statement — even when the answer is "no impact
-on existing features".
+explicitly, how far the feature(s) reach. State it **per feature** when several were requested, and add
+the cross-feature view below. Always give a statement — even when the answer is "no impact on existing
+features".
 
 ## Contents
 - What to check
 - Security impact
+- Cross-feature impact (a list of features)
 - How to classify
 - How to phrase the statement
 
@@ -50,6 +52,21 @@ functionally isolated yet add a security risk, so assess it separately. Check wh
 Classify each security finding with a severity (CRITICAL/HIGH/MEDIUM/LOW — see
 `../create-application/references/security.md`) so the user can weigh it. If the feature adds no new
 attack surface, say so explicitly.
+
+## Cross-feature impact (a list of features)
+
+When the request is a batch of features, the features can also affect **each other**, not just the
+existing app. On top of the per-feature checks above, assess:
+
+- **Inter-dependencies** — feature B relies on something feature A introduces; building or reverting one
+  affects the other. Note the order this forces.
+- **Shared blast radius** — two or more features in the batch modify the same shared code, data model or
+  route. Plan and review those together, and warn that a change made for one may shift the others.
+- **Cumulative migrations** — several features each add migrations; state the combined effect and that
+  they must run in order.
+
+Classify the batch as a whole too: are the features **independent** (safe to build in any order, each
+isolated) or **coupled** (must follow the planned order, a slip in one ripples to the rest)?
 
 ## How to classify
 
