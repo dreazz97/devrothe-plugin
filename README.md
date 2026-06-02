@@ -3,8 +3,9 @@
 Plugin of **development-support skills** for [Claude Code](https://code.claude.com).
 Distributed as a marketplace from GitHub (`dreazz97/devrothe-plugin`).
 
-Current state: 4 skills — [`create-application`](#skill-create-application),
-[`test-application`](#skill-test-application), [`refactor-application`](#skill-refactor-application) and
+Current state: 5 skills — [`plan-strategy`](#skill-plan-strategy),
+[`create-application`](#skill-create-application), [`test-application`](#skill-test-application),
+[`refactor-application`](#skill-refactor-application) and
 [`implement-feature`](#skill-implement-feature).
 
 ---
@@ -17,6 +18,11 @@ Devrothe Plugin/
 └── devrothe/                           # plugin
     ├── .claude-plugin/plugin.json
     └── skills/
+        ├── plan-strategy/
+        │   ├── SKILL.md                # context + frame + research + clarify + strategy + handoff
+        │   └── references/
+        │       ├── research-agent.md   # brief/run the web-research subagent (multi-source, cited)
+        │       └── strategy-and-handoff.md # strategy layout + routing to the other skills
         ├── create-application/
         │   ├── SKILL.md                # interview + plan + scaffold + implementation
         │   └── references/
@@ -80,6 +86,7 @@ To iterate on the plugin without going through GitHub, add the marketplace by lo
 
 | Command | What it does |
 |---------|--------------|
+| `/plan-strategy` | Turns an idea into a researched, decision-ready strategy: grounds in the project, dispatches a web-research subagent, brainstorms with you, and on approval hands off to the right skill. |
 | `/create-application` | Interviews, picks the stack, plans, scaffolds and implements the project with real tests. |
 | `/test-application` | Detects and runs the app's tests and reports; if there are none, analyzes the app, creates tests per facet and reports. |
 | `/refactor-application` | Analyzes an existing app, plans the restructuring toward the `create-application` stack/practices, executes (with approval) and validates with tests. |
@@ -87,6 +94,53 @@ To iterate on the plugin without going through GitHub, add the marketplace by lo
 
 The skills also trigger via natural language (see the triggers below) — using the slash command is not
 mandatory.
+
+---
+
+## Skill: `plan-strategy`
+
+Turns a raw idea into a **researched, decision-ready strategy** — a more autonomous alternative to the
+built-in plan mode. It acts as the planning agent: grounds itself in the project, delegates the web
+research to a subagent, brainstorms with you, synthesizes a strategy you approve, and then hands that
+strategy off to the right execution skill. It **plans, it does not build** — no files are changed in
+this skill (beyond optionally recording the decided strategy when you ask).
+
+### How to invoke
+
+- Command: `/plan-strategy`
+- Trigger phrases: *"help me plan"*, *"research and plan"*, *"brainstorm this idea"*, *"plan this"*
+  (plus the Portuguese equivalents: *"planeia isto"*, *"ajuda-me a planear"*, *"pesquisa e planeia"*,
+  *"brainstorm desta ideia"*).
+
+### What it does
+
+1. **Context** — reads `CLAUDE.md`, the project memory, the `README`/docs and analyzes the codebase
+   (a full read for a broad idea), and notes the security posture and constraints.
+2. **Frame** — restates the idea and the goal, then lists the open unknowns split into *"ask the user"*
+   vs *"research the web"*.
+3. **Research** — dispatches a dedicated **web-research subagent** (one brief per independent topic, in
+   parallel) that consults **multiple independent sources**, prefers current/dated information, flags
+   conflicts and returns a **cited briefing** with a confidence level.
+4. **Clarify** — brainstorms with you: presents the options and trade-offs (now backed by evidence) and
+   asks the questions needed to remove ambiguity.
+5. **Strategy** — synthesizes context + research + answers into a concrete strategy (goal, constraints,
+   options considered, **recommendation + rationale**, scope, risks, phases, success criteria),
+   presented for approval and iterated until you're satisfied.
+6. **Hand off** — on approval, triggers the matching skill, passing the strategy as input so it doesn't
+   redo discovery:
+
+   | The strategy is about… | Hands off to |
+   |---|---|
+   | A brand-new project | `create-application` |
+   | Adding/building feature(s) in an existing app | `implement-feature` |
+   | Restructuring/normalizing an existing app | `refactor-application` |
+   | Running or creating tests | `test-application` |
+
+> **Plans, doesn't build.** The planning phase stays free of side effects so you can iterate freely;
+> the execution skills own their own detailed planning, impact analysis and tests — `plan-strategy`
+> feeds them the strategy, it doesn't replace those steps. The **security posture** and UX weight are
+> carried into the plan so the downstream skill applies the right defaults. If you'd rather stop at the
+> plan, it stays recorded and nothing is triggered.
 
 ---
 

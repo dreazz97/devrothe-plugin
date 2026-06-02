@@ -1,7 +1,7 @@
 {
   "name": "devrothe",
-  "version": "0.9.0",
-  "description": "Development-support skills: create-application (bootstrap, planning and implementation with real tests), test-application (validate/create/run tests), refactor-application (restructure an existing app to the target stack and practices) and implement-feature (add one or more features to an existing project with impact analysis and real tests). All four build/keep apps secure-by-default — gated on a PoC/demo decision.",
+  "version": "0.10.0",
+  "description": "Development-support skills: plan-strategy (turn an idea into a researched, decision-ready strategy and hand it off), create-application (bootstrap, planning and implementation with real tests), test-application (validate/create/run tests), refactor-application (restructure an existing app to the target stack and practices) and implement-feature (add one or more features to an existing project with impact analysis and real tests). All build/keep apps secure-by-default — gated on a PoC/demo decision.",
   "author": {
     "name": "Iuri Peniche",
     "email": "iuri@pgtecmed.com"
