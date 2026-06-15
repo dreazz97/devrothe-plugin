@@ -35,7 +35,7 @@ logic, not look and feel.
 
 **Rule: professional UI/UX, not the generic AI look.** If the feature has any UI, follow
 `../create-application/references/design.md` — professional UI/UX fundamentals (hierarchy, spacing,
-type scale, WCAG AA contrast, focus/keyboard states, responsiveness) and none of the AI-slop tells
+type scale, WCAG AA contrast in both light and dark, focus/keyboard states, responsiveness) and none of the AI-slop tells
 (emojis as UI, cliché purple→blue gradients, untouched stock defaults, buzzword filler). Match the
 project's existing design language. Why: a new feature must look as deliberate and consistent as the
 rest of the app, not mass-produced.

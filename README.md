@@ -3,10 +3,10 @@
 Plugin of **development-support skills** for [Claude Code](https://code.claude.com).
 Distributed as a marketplace from GitHub (`dreazz97/devrothe-plugin`).
 
-Current state: 5 skills — [`plan-strategy`](#skill-plan-strategy),
+Current state: 6 skills — [`plan-strategy`](#skill-plan-strategy),
 [`create-application`](#skill-create-application), [`test-application`](#skill-test-application),
-[`refactor-application`](#skill-refactor-application) and
-[`implement-feature`](#skill-implement-feature).
+[`refactor-application`](#skill-refactor-application), [`implement-feature`](#skill-implement-feature)
+and [`implement-design`](#skill-implement-design).
 
 ---
 
@@ -44,11 +44,16 @@ Devrothe Plugin/
         │       ├── assessment.md       # analysis: app type, deviations and bugs
         │       ├── restructure-plan.md # phased restructuring plan
         │       └── execution.md        # safe execution and validation
-        └── implement-feature/
-            ├── SKILL.md                # clarify + plan + impact statement + implement + tests
+        ├── implement-feature/
+        │   ├── SKILL.md                # clarify + plan + impact statement + implement + tests
+        │   └── references/
+        │       ├── analysis-and-plan.md # analyze the codebase and structure the plan
+        │       └── impact-analysis.md   # blast-radius assessment before coding
+        └── implement-design/
+            ├── SKILL.md                # discover direction + design brief + plan + reskin + validate
             └── references/
-                ├── analysis-and-plan.md # analyze the codebase and structure the plan
-                └── impact-analysis.md   # blast-radius assessment before coding
+                ├── design-direction.md  # discovery interview, design brief, light/dark contrast
+                └── redesign-execution.md # map system + tokens-first behavior-preserving reskin
 ```
 
 ---
@@ -91,6 +96,7 @@ To iterate on the plugin without going through GitHub, add the marketplace by lo
 | `/test-application` | Detects and runs the app's tests and reports; if there are none, analyzes the app, creates tests per facet and reports. |
 | `/refactor-application` | Analyzes an existing app, plans the restructuring toward the `create-application` stack/practices, executes (with approval) and validates with tests. |
 | `/implement-feature` | Implements one or more requested features in an existing project: clarifies, plans the whole set ordered by dependency, states the impact, then builds them one at a time with real tests following the project's conventions. |
+| `/implement-design` | Redesigns an existing app's look-and-feel: helps you decide the direction (theme, mood, palette, typography), then reskins tokens-first and behavior-preserving, with WCAG AA contrast checked in both light and dark. |
 
 The skills also trigger via natural language (see the triggers below) — using the slash command is not
 mandatory.
@@ -133,6 +139,7 @@ this skill (beyond optionally recording the decided strategy when you ask).
    |---|---|
    | A brand-new project | `create-application` |
    | Adding/building feature(s) in an existing app | `implement-feature` |
+   | Redesigning an existing app's look-and-feel | `implement-design` |
    | Restructuring/normalizing an existing app | `refactor-application` |
    | Running or creating tests | `test-application` |
 
@@ -338,6 +345,44 @@ plans the set, discloses impact, then builds with real tests.
 > Preserves existing behavior — a new feature must not break or change other features (including ones
 > delivered earlier in the same batch). Security hardening is gated on the project's PoC/demo posture
 > (skipped for a throwaway, applied for a real app).
+
+---
+
+## Skill: `implement-design`
+
+Redesigns an existing project's **entire look-and-feel** to your requirements. It is as much a **design
+decision-support partner** as an implementation skill: its distinctive job is to help you *decide* the
+direction — the theme, the feeling, the palette, the idea — and only then apply it, reskinning
+tokens-first and **preserving behavior** (it changes the look, not what the app does).
+
+### How to invoke
+
+- Command: `/implement-design`
+- Trigger phrases: *"redesign the app"*, *"change the design"*, *"new look and feel"*, *"restyle"*,
+  *"new theme"*, *"new color palette"* (plus the Portuguese equivalents: *"muda o design"*, *"redesenha
+  a app"*, *"novo visual"*, *"nova paleta de cores"*, *"muda o tema"*).
+
+### Flow
+
+1. **Context** — reads CLAUDE.md, memory, READMEs/docs and **maps the current design system** (styling
+   approach, theme tokens, components, light/dark mechanism) and the screens the redesign reaches.
+2. **Discover** — the decision-support core: asks about the app's theme/purpose, audience,
+   **mood/feeling**, brand constraints and references, then surfaces concrete palette/type options with
+   trade-offs and **recommends** one.
+3. **Direction** — synthesizes a concrete design direction as **tokens** (palette with explicit light-
+   and dark-mode values, typography, spacing/density, radius/shadow, motion, component style), with
+   **WCAG AA contrast verified in both themes**, presented for approval.
+4. **Plan** — a phased, behavior-preserving plan (tokens → shared components → screens), flagging any
+   deliberate layout/UX change; recorded as tasks and approved before editing.
+5. **Implement** — safety net (branch/commit) first, then reskins **tokens-first**, preserving behavior
+   and the security posture, keeping **both themes accessible** as it goes.
+6. **Validate** — the existing test suite stays **green** (proof behavior was preserved) + lint/build/
+   startup; contrast and states verified in light *and* dark; plus the manual-testing disclaimer (the
+   visual result and both themes need a real browser).
+
+> Changes the look, not the behavior — any deliberate layout/UX change is a named plan item, never a
+> silent side effect. **Light and dark are both checked for WCAG AA contrast** — dark mode is
+> re-derived, not the light palette inverted.
 
 ---
 

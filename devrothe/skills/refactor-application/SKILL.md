@@ -23,8 +23,9 @@ the end of each one; only move to the next with the previous one green. Why: err
 and stay isolated to the phase that introduced them.
 
 **Rule: professional UI/UX when aligning the frontend.** When the restructuring touches UI, bring it
-up to `../create-application/references/design.md` — professional UI/UX fundamentals and none of the
-AI-slop tells (emojis as UI, cliché purple→blue gradients, untouched stock defaults, buzzword copy).
+up to `../create-application/references/design.md` — professional UI/UX fundamentals (including legible
+WCAG AA contrast in both light and dark themes) and none of the AI-slop tells (emojis as UI, cliché
+purple→blue gradients, untouched stock defaults, buzzword copy).
 Why: aligning to the target methodology includes the visual quality bar, not just the file layout.
 Behavior preservation still holds — improve the design without changing what features do, and flag any
 notable visual change as a deliberate plan item rather than a silent side effect.

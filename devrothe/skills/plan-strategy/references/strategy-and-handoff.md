@@ -59,6 +59,7 @@ Map the approved strategy to the skill that executes it:
 |---|---|---|
 | Starting a brand-new project (no codebase yet) | `create-application` | interview, stack, scaffold, build with tests |
 | Adding/building one or more features in an existing app | `implement-feature` | clarify, plan, impact statement, build with tests |
+| Redesigning the look-and-feel/theme of an existing app | `implement-design` | design decision-support, design brief, tokens-first behavior-preserving reskin |
 | Restructuring/normalizing an existing app to the target practices | `refactor-application` | assess, phased restructure plan, execute, validate |
 | Running or creating tests | `test-application` | detect/map coverage, create missing tests, run, report |
 

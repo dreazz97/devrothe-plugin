@@ -34,7 +34,7 @@ green test suite is a completion gate (step 7).
 
 **Rule: professional UI/UX, not the generic AI look.** For any UI, follow `references/design.md` —
 respect UI/UX fundamentals (visual hierarchy, consistent spacing scale, deliberate type scale, WCAG AA
-contrast, focus/keyboard states, responsiveness, purposeful motion) and avoid the tells of
+contrast in both light and dark themes, focus/keyboard states, responsiveness, purposeful motion) and avoid the tells of
 AI-generated design (emojis as UI, cliché purple→blue gradients, blindly-applied boilerplate hero +
 identical 3-card grids, untouched stock defaults, buzzword filler copy). Why: the default "AI slop"
 aesthetic looks mass-produced and unprofessional — deliberate, restrained design is the baseline.

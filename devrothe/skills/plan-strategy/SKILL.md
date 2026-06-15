@@ -1,6 +1,6 @@
 ---
 name: plan-strategy
-description: Turns a raw idea into a researched, decision-ready strategy — a more autonomous alternative to plan mode. Acts as the planning agent: reads the project's CLAUDE.md, memory and README and analyzes the codebase for context, brainstorms with the user by asking the questions needed to remove ambiguity, and dispatches a web-research subagent that gathers valid, current information across multiple sources and compiles it back. Synthesizes context, research and answers into a concrete strategy (options, trade-offs, recommendation, scope, risks, phases) for approval; on approval, hands off to the matching devrothe skill (implement-feature, create-application, refactor-application, test-application) so execution flows from the plan. Use when the user wants to research, brainstorm or plan an idea before building. Triggers on "plan-strategy", "help me plan", "research and plan", "brainstorm this idea", and in Portuguese "planeia isto", "ajuda-me a planear", "pesquisa e planeia", "brainstorm desta ideia".
+description: Turns a raw idea into a researched, decision-ready strategy — a more autonomous alternative to plan mode. Acts as the planning agent: reads the project's CLAUDE.md, memory and README and analyzes the codebase, brainstorms with the user by asking the questions needed to remove ambiguity, and dispatches a web-research subagent that gathers valid, current information across multiple sources and compiles it back. Synthesizes context, research and answers into a concrete strategy (options, trade-offs, recommendation, scope, risks, phases) for approval; on approval, hands off to the matching devrothe skill (implement-feature, implement-design, create-application, refactor-application, test-application) so execution flows from the plan. Use when the user wants to research, brainstorm or plan an idea before building. Triggers on "plan-strategy", "help me plan", "research and plan", "brainstorm this idea", and in Portuguese "planeia isto", "ajuda-me a planear", "pesquisa e planeia", "brainstorm desta ideia".
 ---
 
 # plan-strategy
@@ -47,8 +47,9 @@ assuming it.
 **Rule: hand off, don't duplicate.** On approval, route to the matching devrothe skill and pass the
 approved strategy as its input, stating what is already decided (see
 `references/strategy-and-handoff.md`). Why: plan-strategy is the higher-level brainstorm/research/
-strategy layer; the execution skills (`implement-feature`, `create-application`, `refactor-application`,
-`test-application`) own their own detailed planning, impact analysis and tests — feed them the strategy
+strategy layer; the execution skills (`implement-feature`, `implement-design`, `create-application`,
+`refactor-application`, `test-application`) own their own detailed planning, impact analysis and tests —
+feed them the strategy
 so they don't redo discovery from scratch, but let them do their job rather than re-deciding it here.
 
 ## Workflow
@@ -61,7 +62,7 @@ Copy this checklist into the response and tick items off:
 - [ ] 2. Research — dispatch the web-research subagent(s) across multiple independent sources; get a compiled, cited briefing (can run in parallel with an initial clarify round)
 - [ ] 3. Clarify — brainstorm with the user: present options/trade-offs (informed by the research) and ask the questions needed to remove ambiguity
 - [ ] 4. Strategy — synthesize context + research + answers into a concrete strategy (options, recommendation + rationale, scope, risks, phases, success criteria); present for approval; iterate 2–4 as needed
-- [ ] 5. Hand off — on approval, trigger the matching devrothe skill (implement-feature / create-application / refactor-application / test-application), passing the strategy as input
+- [ ] 5. Hand off — on approval, trigger the matching devrothe skill (implement-feature / implement-design / create-application / refactor-application / test-application), passing the strategy as input
 ```
 
 ### 0. Project context
@@ -136,6 +137,7 @@ does not re-ask it (routing table and mechanics in `references/strategy-and-hand
 
 - **Brand-new project** → `create-application`
 - **Add/build feature(s) in an existing app** → `implement-feature`
+- **Redesign/restyle an existing app's look-and-feel** → `implement-design`
 - **Restructure/normalize an existing app** → `refactor-application`
 - **Test work (run/create tests)** → `test-application`
 
