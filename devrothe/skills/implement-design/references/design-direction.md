@@ -70,7 +70,7 @@ tokens; see `../create-application/references/web-stack.md` / `app-stack.md`). S
 - **Radius, border, shadow/elevation** — consistent values (one radius scale, a small shadow set);
   decide how surfaces stack in both themes (in dark, elevation usually means *lighter* surfaces, not
   bigger shadows).
-- **Motion** — durations/easings (~150–250ms, purposeful), honoring reduced-motion.
+- **Motion (framer-motion)** — durations/easings (~150–250ms, purposeful), honoring reduced-motion.
 - **Iconography** — a single icon set (lucide-react), never emojis as UI.
 
 Keep it restrained and intentional (a few deliberate choices beat a pile of effects — see
