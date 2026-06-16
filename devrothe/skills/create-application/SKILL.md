@@ -1,6 +1,6 @@
 ---
 name: create-application
-description: Starts a new project end to end — interviews the user about requirements, picks the right tech stack, scaffolds it, plans the features and implements the project from the plan with real tests. Use when the user wants to start a new project, decide technologies/stack, or initialize and bootstrap a codebase. Triggers on "create-application", "start development", "new project", "start a project", "what stack should I use", "scaffold", and in Portuguese "iniciar desenvolvimento", "novo projeto", "começar um projeto", "que stack uso". Chooses between a Next.js stack (PoC, landing pages, e-commerce, marketing sites) and a React+Vite stack with an Express/Node or FastAPI/Python backend (web applications), with optional modules for authentication, storage (MinIO), observability (Kubernetes), logging, payments (Stripe) and email (Resend).
+description: Starts a new project end to end — interviews the user about requirements, picks the right tech stack, scaffolds it, plans the features and implements the project from the plan with real tests. Use when the user wants to start a new project, decide technologies/stack, or initialize and bootstrap a codebase. Triggers on "create-application", "start development", "new project", "start a project", "what stack should I use", "scaffold", and in Portuguese "iniciar desenvolvimento", "novo projeto", "começar um projeto", "que stack uso". Chooses between a Next.js stack (PoC, landing pages, e-commerce, marketing sites) and a React+Vite stack with an Express/Node or FastAPI/Python backend (web applications), with optional modules for authentication, storage (MinIO), observability (Kubernetes), logging, payments (Stripe) and email (SMTP, Microsoft Graph or Resend, with credentials kept in an encrypted DB vault — Fernet — for real apps).
 ---
 
 # create-application
@@ -110,8 +110,10 @@ SPA decoupled from its own backend.
 4. Will it be deployed on Kubernetes? → **Prometheus + OpenTelemetry** (`observability` module).
 5. Want structured/advanced logging? → **Pino** (Node) or **structlog** (Python) (`logging` module).
 6. Does it process payments? → **Stripe** (`payments` module).
-7. Does it send transactional email (account verification, password reset, orders)? → **Resend**
-   (`email` module).
+7. Does it send (or receive) email? → **email** module. For a PoC/demo this is just Resend with the key
+   in `.env`. For a real app, ask the provider with `AskUserQuestion` (single choice: **SMTP**,
+   **Microsoft Graph** or **Resend**) and store its credentials in the encrypted vault (DB + Fernet),
+   not `.env` — see the `email` and `secrets` sections in `references/modules.md`.
 8. **How should it run locally?** Ask with `AskUserQuestion` (single choice): **(A) Services in Docker,
    app native** — the default: Docker Compose runs the dev services (Postgres/MinIO/Keycloak) and the
    app runs on the host (`pnpm dev`/`uvicorn --reload`); fastest inner loop. **(B) Fully containerized**
@@ -248,6 +250,7 @@ hard to verify reliably with AI. List the concrete manual checks worth doing (se
   secrets/deps, per-stack setup, security testing, severities). Read in steps 1–2 (gate) and 5–7
   (apply) for a real app.
 - **`references/modules.md`** — conditional modules: `auth`, `storage` (MinIO), `observability`
-  (Kubernetes), `logging`, `payments` (Stripe), `email` (Resend) and `compose` (dev services + the
-  local run mode: app native, fully containerized, or both). Read only the sections of the modules
-  activated in the interview.
+  (Kubernetes), `logging`, `payments` (Stripe), `email` (SMTP / Microsoft Graph / Resend), `secrets`
+  (encrypted credential vault — DB + Fernet) and `compose` (dev services + the local run mode: app
+  native, fully containerized, or both). Read only the sections of the modules activated in the
+  interview.

@@ -108,6 +108,14 @@ Use this as the mental checklist while implementing — each row is "what to do"
   at startup — fail fast if missing). Keep `.env`, `*.pem`, `*.key`, `credentials*`, `secrets/` in
   `.gitignore` **before** the first commit. If a secret was ever committed, rotate it — `.gitignore`
   does not remove git history.
+- **Runtime/integration credentials may live in the DB — encrypted, never plaintext.** Some real-app
+  secrets must be editable at runtime (an admin configures the email provider) or differ per tenant;
+  those don't fit a redeploy-to-change `.env`. They go in the **encrypted credential vault** (DB +
+  Fernet — AES-128-CBC + HMAC-SHA256; see the `secrets` section in `modules.md`), encrypted at rest and
+  decrypted in memory only. This is a deliberate split by lifecycle, not a loophole: bootstrap/infra
+  secrets (`DATABASE_URL`, the JWT signing secret, and the **Fernet key** that bootstraps the vault)
+  stay in env; only runtime/per-tenant credentials move to the vault. **Plaintext secrets stored in the
+  DB are a finding**, the same severity as secrets in code — encryption at rest is the whole point.
 - **Dependencies.** Commit the lockfile; pin versions. Run the stack's audit
   (`pnpm audit` / `pip-audit` / `govulncheck` / `cargo audit` / `dotnet list --vulnerable`) and resolve
   known-vulnerable packages: patch bumps apply freely, minor bumps after a changelog check, major bumps

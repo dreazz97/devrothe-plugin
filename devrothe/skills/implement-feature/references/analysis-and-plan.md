@@ -29,7 +29,8 @@ Read the relevant code (do not change it yet) and determine:
 - **Routes/endpoints** — new routes/handlers, or changes to existing ones (watch for contract changes).
 - **Shared code it uses or changes** — utilities, components, hooks, services, types; reusing is good,
   modifying shared code is a blast-radius signal (feed it into `impact-analysis.md`).
-- **Integration points** — auth/permissions, storage, payments, email, external APIs, background jobs
+- **Integration points** — auth/permissions, storage, payments, email (SMTP/Graph/Resend; real-app
+  creds in the encrypted vault — DB + Fernet), external APIs, background jobs
   (see `../create-application/references/modules.md`).
 - **Conventions to follow** — patterns from CLAUDE.md, existing similar features, naming, error
   handling, validation (Zod/Pydantic).

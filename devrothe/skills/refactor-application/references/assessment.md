@@ -36,7 +36,7 @@ Compare the project with the `create-application` destination. For each item, ma
 | UI/UX design | professional, accessible; no AI-slop tells (see design.md) |
 | Tests | real layer (see testing.md) |
 | Dev infra | Docker Compose (Postgres, and MinIO/Keycloak if applicable); note the current local run mode — services-only vs a `Dockerfile`/`app` service that containerizes the app |
-| Modules | auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments, email |
+| Modules | auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments, email (SMTP/Graph/Resend; real-app creds in the Fernet vault), secrets (encrypted credential vault — DB + Fernet) |
 | Security (real app) | secure-by-default baseline: validation, authz, headers, rate limiting, secrets hygiene (see security.md) |
 
 Target details in `../create-application/references/web-stack.md`, `app-stack.md`, `modules.md`,
@@ -60,7 +60,9 @@ red flags so the plan can fix them like the bugs. This is **flagging during a re
 security audit** — record what is plainly visible while reading the code. Look for:
 
 - **Secrets**: hardcoded credentials/keys/tokens in code; secrets committed to git or its history;
-  `.env`/`*.pem`/`*.key` not in `.gitignore`.
+  `.env`/`*.pem`/`*.key` not in `.gitignore`; integration/provider credentials stored in **plaintext in
+  the DB** (a real app should keep runtime/per-tenant creds in the encrypted vault — DB + Fernet, see
+  `../create-application/references/modules.md`).
 - **Injection**: SQL via string concat/interpolation; `eval`/`pickle`/unsafe `yaml.load`;
   `shell=True`/`os.system` on user input.
 - **Access control**: protected routes without auth; `:id` access without an ownership/role check

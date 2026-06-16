@@ -34,8 +34,10 @@ Suggestion (adjust to the project and the detected facets):
    `../create-application/references/design.md`); flag notable visual changes as deliberate plan items.
 5. **Folder structure** — migrate to robust feature-first (see `../create-application/references/`
    `web-stack.md` or `app-stack.md`), moving the code by domain.
-6. **Modules** — align auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments,
-   email as applicable (see `../create-application/references/modules.md`). Also align the **local run
+6. **Modules** — align auth (Keycloak/JWT httpOnly), storage (MinIO), observability, logging, payments
+   and email (SMTP/Graph/Resend; for a real app move provider creds into the encrypted vault — DB +
+   Fernet — rather than `.env`) as applicable (see `../create-application/references/modules.md`). Also
+   align the **local run
    mode** (`compose` section): the dev services belong in Docker Compose; whether to containerize the
    **app** itself (a `Dockerfile` + `app` service) is the user's choice — offer the same three options
    as create-application (services-only/native, fully containerized, or both) and only add/keep the
@@ -44,7 +46,9 @@ Suggestion (adjust to the project and the detected facets):
    in-container.
 7. **Security alignment (real app)** — close the security findings and align to the baseline (see
    `../create-application/references/security.md`): boundary validation, authorization/ownership
-   checks, parameterized data access, security headers, locked CORS, rate limiting, secrets→env. Note:
+   checks, parameterized data access, security headers, locked CORS, rate limiting, secrets→env (or the
+   encrypted vault — DB + Fernet — for runtime/per-tenant credentials such as email provider creds; see
+   `../create-application/references/modules.md`). Note:
    the CRITICAL secrets-in-code/history findings are pulled forward (rotate the secret; `.gitignore`
    does not remove history), and behavior-changing fixes carry the deliberate-change flag. Skip this
    phase entirely for a PoC/demo (beyond the repo-hygiene floor).

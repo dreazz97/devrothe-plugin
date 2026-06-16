@@ -45,7 +45,8 @@ functionally isolated yet add a security risk, so assess it separately. Check wh
   internal/metadata hosts.
 - **Touches authn/authz** — new login/reset/token flows, roles, or changes to who can reach existing
   routes; needs rate limiting and the auth invariants (`exp`, signature, httpOnly cookies).
-- **Handles secrets or PII** — new credentials/keys (env, not code), or personal/financial/health data
+- **Handles secrets or PII** — new credentials/keys (env, or the encrypted vault — DB + Fernet — for
+  runtime/per-tenant creds; never plaintext in code or the DB), or personal/financial/health data
   (storage, logging redaction, retention).
 - **Adds dependencies** — new packages can carry known vulnerabilities; note them for an audit.
 

@@ -178,7 +178,9 @@ mandatory pages/endpoints (this feeds the plan and the implementation). Then the
 5. **Deploy on Kubernetes?** → Prometheus + OpenTelemetry
 6. **Structured logging?** → Pino (Node) / structlog (Python)
 7. **Payments?** → Stripe
-8. **Transactional email?** → Resend
+8. **Email (send/receive)?** → for a real app, choice (radio): SMTP, Microsoft Graph or Resend, with
+   the provider credentials kept in an encrypted DB vault (Fernet) instead of `.env`; a PoC just uses
+   Resend with the key in `.env`
 9. **How to run locally?** → choice (radio): services in Docker + app native (default), fully
    containerized (`Dockerfile` + `app` service, `docker compose up` runs everything), or both
 
@@ -196,8 +198,9 @@ React + Vite with the same UI stack above, plus an **Express/Node** or **FastAPI
 
 Activated based on the answers: `auth` (Keycloak or JWT httpOnly), `storage` (MinIO/S3),
 `observability` (Prometheus + OpenTelemetry for Kubernetes), `logging` (Pino/structlog), `payments`
-(Stripe), `email` (Resend) and `compose` (dev services in Docker Compose, plus the chosen local run
-mode — app native, fully containerized, or both).
+(Stripe), `email` (SMTP / Microsoft Graph / Resend — real-app credentials in an encrypted DB vault),
+`secrets` (encrypted credential vault — DB + Fernet) and `compose` (dev services in Docker Compose,
+plus the chosen local run mode — app native, fully containerized, or both).
 
 ### Cross-cutting defaults (always)
 

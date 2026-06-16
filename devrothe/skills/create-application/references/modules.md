@@ -9,7 +9,8 @@ stack already chosen (Next.js or React+Vite+backend).
 - observability — Observability on Kubernetes (Prometheus + OpenTelemetry)
 - logging — Structured logging (Pino / structlog)
 - payments — Payments (Stripe)
-- email — Transactional email (Resend)
+- email — Email send/receive (SMTP, Microsoft Graph or Resend)
+- secrets — Encrypted credential vault (DB + Fernet) — real apps
 - compose — Dev services + local run mode (Docker Compose, optional app containerization)
 
 ## auth — Authentication (Keycloak or own JWT in httpOnly cookies)
@@ -109,13 +110,91 @@ Structured logs (JSON) are searchable and correlatable with traces; prefer them 
   events).
 - Keep `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in env.
 
-## email — Transactional email (Resend)
+## email — Email send/receive (SMTP, Microsoft Graph or Resend)
 
-For account verification, password reset, receipts/orders.
+Covers transactional email (account verification, password reset, receipts/orders) and — via Microsoft
+Graph — reading/receiving mail. The provider choice and where the credentials live **depend on the
+PoC/demo gate** (see `security.md`), because they trade simplicity for production fit.
+
+### PoC/demo — keep it simple
+
+One transport, credentials in `.env`. Default to **Resend** (or SMTP if the user already has a relay).
+No vault, no DB config — speed over flexibility.
 
 - **Node**: `pnpm add resend`. Optional: `react-email` to compose templates in React.
 - **Python**: call the Resend API over HTTP (`pip install resend`).
-- Keep `RESEND_API_KEY` in env. Configure a verified domain for the sender.
+- Keep `RESEND_API_KEY` (or the SMTP creds) in env; configure a verified sender domain.
+
+### Real app — pick the provider, store creds in the vault
+
+Ask the user (`AskUserQuestion`, single choice) which provider: **SMTP**, **Microsoft Graph** or
+**Resend**. For a real app the provider's credentials are **not** kept in `.env` — they live in the
+**encrypted credential vault** (DB + Fernet; see the `secrets` section below). Why: a real app usually
+needs the mail config to be changeable at runtime (an admin screen) and, in multi-tenant apps,
+different credentials per tenant — neither fits a redeploy-to-change `.env`. The one exception is the
+Fernet key itself, which stays in env (it bootstraps the vault).
+
+Build the integration behind a small `EmailProvider` interface (`send(...)`, and for Graph optionally
+`listMessages(...)`) so the chosen provider is swappable and testable with a fake.
+
+**SMTP** — works with any relay (Postfix, SES SMTP, Mailgun, a corporate server).
+- **Node**: `pnpm add nodemailer`. **Python**: `aiosmtplib` (async) or stdlib `smtplib`.
+- Vault keys: host, port, username, password, from-address, TLS mode.
+
+**Microsoft Graph** — Microsoft 365 / Exchange Online; supports both send and receive.
+- App registration in Entra ID: tenant id, client id, client secret (or certificate), using the
+  **client-credentials** flow (app-only). Grant `Mail.Send` (and `Mail.Read` for inbound) application
+  permissions with admin consent — scope down to specific mailboxes with Application Access Policies.
+- **Node**: `pnpm add @azure/msal-node @microsoft/microsoft-graph-client`. **Python**: `pip install
+  msal httpx` (or `msgraph-sdk`).
+- Send: `POST /users/{mailbox}/sendMail`. **Receiving (capability note):** read with
+  `GET /users/{mailbox}/messages`, or subscribe to change notifications
+  (`POST /subscriptions` → your webhook) for near-real-time inbound. Treat receive as opt-in — wire it
+  only when the feature needs inbound mail; validate the subscription `clientState` and renew the
+  subscription before it expires.
+- Vault keys: tenant id, client id, client secret, default from/mailbox.
+
+**Resend** — same SDK as the PoC path, but read `RESEND_API_KEY` from the vault, not `.env`.
+
+Validate the active provider's config at startup (or on first send) and fail with a clear message if it
+is missing — same fail-fast spirit as env validation.
+
+## secrets — Encrypted credential vault (DB + Fernet)
+
+A reusable place to keep **runtime/integration credentials encrypted at rest in the database** instead
+of `.env`. Introduced for the `email` module (real-app path) but written to be reused by any module
+that holds admin-configurable or per-tenant credentials (e.g. `payments`, `storage`). Gated on the
+PoC/demo decision — a PoC keeps its few secrets in `.env`; a real app uses the vault for credentials
+that must be changeable at runtime.
+
+**What goes where.** This does not replace env wholesale — it splits secrets by lifecycle:
+- **Env (unchanged):** bootstrap/infra secrets the app needs to start — `DATABASE_URL`, the JWT signing
+  secret, and the **Fernet key** itself. These are deploy-time, not user-editable.
+- **Vault (DB + Fernet):** credentials configured *inside* the running app or differing per tenant —
+  email provider creds, third-party API keys managed from an admin UI. Encrypted at rest; the row holds
+  ciphertext, never plaintext.
+
+**Fernet.** Symmetric authenticated encryption (AES-128-CBC + HMAC-SHA256) — encrypt on write, decrypt
+in memory only when the secret is used. The key is a single bootstrap secret in env
+(`APP_ENCRYPTION_KEY`), generated with `Fernet.generate_key()` and validated at startup (fail fast if
+missing). Support rotation with `MultiFernet` (new key first for encrypt; old keys still decrypt until
+everything is re-encrypted).
+
+- **Python**: `pip install cryptography` → `from cryptography.fernet import Fernet, MultiFernet`.
+- **Node**: `pnpm add fernet` (Fernet-compatible, so tokens interoperate with the Python lib). Keep the
+  same key format if both stacks ever touch the same vault.
+
+**Schema** (Prisma/SQLAlchemy) — one row per stored secret:
+- `id`, optional `tenantId`/`scope` (per-tenant or global), `name` (e.g. `email.smtp.password`),
+  `ciphertext` (the Fernet token), `createdAt`/`updatedAt`.
+- Wrap it in a small service: `setSecret(name, plaintext)` encrypts and upserts; `getSecret(name)`
+  decrypts. Cache decrypted values in memory only (short TTL), never on disk.
+
+**Rules.** Never log or return decrypted values; the admin UI is **write-only** (show "configured",
+allow replace, never reveal). Plaintext credentials in the DB are a finding, same as secrets in code
+(see `security.md`). The Fernet key is the crown jewel — losing it means re-entering every secret,
+leaking it means the vault is readable; keep it out of git and rotate the stored secrets if it ever
+leaks.
 
 ## compose — Dev services + local run mode (Docker Compose)
 
