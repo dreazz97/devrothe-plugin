@@ -3,10 +3,10 @@
 Plugin of **development-support skills** for [Claude Code](https://code.claude.com).
 Distributed as a marketplace from GitHub (`dreazz97/devrothe-plugin`).
 
-Current state: 6 skills — [`plan-strategy`](#skill-plan-strategy),
+Current state: 7 skills — [`plan-strategy`](#skill-plan-strategy),
 [`create-application`](#skill-create-application), [`test-application`](#skill-test-application),
-[`refactor-application`](#skill-refactor-application), [`implement-feature`](#skill-implement-feature)
-and [`implement-design`](#skill-implement-design).
+[`refactor-application`](#skill-refactor-application), [`implement-feature`](#skill-implement-feature),
+[`implement-design`](#skill-implement-design) and [`create-patchnotes`](#skill-create-patchnotes).
 
 ---
 
@@ -49,11 +49,16 @@ Devrothe Plugin/
         │   └── references/
         │       ├── analysis-and-plan.md # analyze the codebase and structure the plan
         │       └── impact-analysis.md   # blast-radius assessment before coding
-        └── implement-design/
-            ├── SKILL.md                # discover direction + design brief + plan + reskin + validate
+        ├── implement-design/
+        │   ├── SKILL.md                # discover direction + design brief + plan + reskin + validate
+        │   └── references/
+        │       ├── design-direction.md  # discovery interview, design brief, light/dark contrast
+        │       └── redesign-execution.md # map system + tokens-first behavior-preserving reskin
+        └── create-patchnotes/
+            ├── SKILL.md                # context + gather features + confirm + render PDF
             └── references/
-                ├── design-direction.md  # discovery interview, design brief, light/dark contrast
-                └── redesign-execution.md # map system + tokens-first behavior-preserving reskin
+                ├── patchnotes-format.md # canonical layout + two-audience writing + HTML template
+                └── pdf-generation.md    # deterministic, stack-independent PDF rendering
 ```
 
 ---
@@ -97,6 +102,7 @@ To iterate on the plugin without going through GitHub, add the marketplace by lo
 | `/refactor-application` | Analyzes an existing app, plans the restructuring toward the `create-application` stack/practices, executes (with approval) and validates with tests. |
 | `/implement-feature` | Implements one or more requested features in an existing project: clarifies, plans the whole set ordered by dependency, states the impact, then builds them one at a time with real tests following the project's conventions. |
 | `/implement-design` | Redesigns an existing app's look-and-feel: helps you decide the direction (theme, mood, palette, typography), then reskins tokens-first and behavior-preserving, with WCAG AA contrast checked in both light and dark. |
+| `/create-patchnotes` | Generates a fixed-format PDF patch-notes report of the features just implemented: identifies them from the conversation, then the recent commits, then by asking you; describes each one in plain language and technically; renders the same layout for every app. |
 
 The skills also trigger via natural language (see the triggers below) — using the slash command is not
 mandatory.
@@ -386,6 +392,48 @@ tokens-first and **preserving behavior** (it changes the look, not what the app 
 > Changes the look, not the behavior — any deliberate layout/UX change is a named plan item, never a
 > silent side effect. **Light and dark are both checked for WCAG AA contrast** — dark mode is
 > re-derived, not the light palette inverted.
+
+---
+
+## Skill: `create-patchnotes`
+
+Produces a **PDF patch-notes (release-notes) report** for the features just implemented in the current
+application. The report always has the **same layout regardless of the app**: the application name at
+the top, the implementation date, and the list of features — each described **twice**: a plain-language
+summary anyone can understand and a technical note of what was actually done. It pairs naturally after
+`implement-feature` or `create-application`, but works standalone.
+
+### How to invoke
+
+- Command: `/create-patchnotes`
+- Trigger phrases: *"patch notes"*, *"release notes"*, *"changelog PDF"*, *"generate patch notes"*,
+  *"report of the features"* (plus the Portuguese equivalents: *"cria as patch notes"*, *"notas de
+  versão"*, *"notas de lançamento"*, *"relatório das features"*, *"PDF das funcionalidades"*).
+
+### Flow
+
+1. **Context** — reads CLAUDE.md, memory, READMEs/docs and the manifests to resolve the **application
+   name**, the **language** to write the report in (it follows the conversation's language — the report
+   is an end-user deliverable, not a plugin artifact) and the **implementation date** (defaults to
+   today).
+2. **Gather features** — by source precedence: the **current conversation** first (it has the intent and
+   detail), then corroborated and filled in from the **recent git commits** (messages + diffstat),
+   capturing for each a title, a tag (New / Improvement / Fix), the plain-language summary and the
+   technical "what was done".
+3. **Resolve doubts** — when the source is unclear, candidates overlap or there are several, asks you to
+   **pick from the available list** (`AskUserQuestion`, multi-select) and confirms the date/app name.
+4. **Compose & confirm** — writes each feature for **both audiences** and presents the assembled patch
+   notes for your approval **before** rendering.
+5. **Render** — fills the **canonical HTML template** with the data and produces the PDF with a reliable,
+   stack-independent engine (a Chromium-family renderer first, documented fallbacks otherwise), to a
+   dated path (`<app>-patch-notes-YYYY-MM-DD.pdf`).
+6. **Report** — gives you the output path and the manual check (open the PDF to confirm the layout and
+   wording).
+
+> Same format, every app — the layout is fixed in one print-safe HTML/CSS template, so only the data
+> changes and the output is identical across machines and stacks. Each feature is written for both a
+> non-technical reader and a developer; nothing in the report is invented — the technical note is
+> grounded in the conversation and the actual commits/diff.
 
 ---
 

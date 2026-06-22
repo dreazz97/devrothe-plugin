@@ -1,7 +1,7 @@
 {
   "name": "devrothe",
-  "version": "0.12.0",
-  "description": "Development-support skills: plan-strategy (turn an idea into a researched, decision-ready strategy and hand it off), create-application (bootstrap, planning and implementation with real tests), test-application (validate/create/run tests), refactor-application (restructure an existing app to the target stack and practices), implement-feature (add one or more features to an existing project with impact analysis and real tests) and implement-design (redesign an existing app's look-and-feel with design decision-support and light/dark contrast checks). All build/keep apps secure-by-default — gated on a PoC/demo decision.",
+  "version": "0.13.0",
+  "description": "Development-support skills: plan-strategy (turn an idea into a researched, decision-ready strategy and hand it off), create-application (bootstrap, planning and implementation with real tests), test-application (validate/create/run tests), refactor-application (restructure an existing app to the target stack and practices), implement-feature (add one or more features to an existing project with impact analysis and real tests), implement-design (redesign an existing app's look-and-feel with design decision-support and light/dark contrast checks) and create-patchnotes (generate a fixed-format PDF patch-notes report of the features just implemented). All build/keep apps secure-by-default — gated on a PoC/demo decision.",
   "author": {
     "name": "Iuri Peniche",
     "email": "iuri@pgtecmed.com"
